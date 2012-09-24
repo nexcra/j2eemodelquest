@@ -1,0 +1,99 @@
+<html xmlns="http://www.w3.org/1999/xhtml">  
+    <head>  
+      <title>XTech SVG Demo</title>  
+<link rel="stylesheet" type="text/css"	href="/resources/extjs/4.1.0-gpl/resources/css/ext-all.css">
+<link rel="stylesheet" type="text/css"	href="/resources/extjs/4.1.0-gpl/examples/shared/example.css" />
+<link rel="stylesheet" type="text/css"	href="/resources/extjs/4.1.0-gpl/examples/ux/css/TabScrollerMenu.css" />
+<link rel="stylesheet" type="text/css" href="/resources/extjs/4.1.0-gpl/examples/ux/grid/css/GridFilters.css" />
+<link rel="stylesheet" type="text/css" href="/resources/extjs/4.1.0-gpl/examples/ux/grid/css/RangeMenu.css" />
+<link rel="stylesheet" type="text/css" href="/resources/css/screen.css" />
+<link rel="icon" href="/resources/images/favicon.ico" type="image/x-icon" />
+<script type="text/javascript" src="/resources/jquery/1.7.2.min.js"></script>
+<script type="text/javascript" src="/resources/jquery/plugins/jquery.svg.js"></script>
+<script type="text/javascript" src="/resources/extjs/4.1.0-gpl/bootstrap.js"></script>
+<script type="text/javascript" src="/resources/extjs/4.1.0-gpl/locale/ext-lang-zh_CN.js"></script>
+    <script language="javascript">  
+    Ext.onReady(function(){  
+var drawComponent = Ext.create('Ext.draw.Component', {
+    width: 800,
+    height: 600,
+    border:1,
+    renderTo: document.body
+}), surface = drawComponent.surface;
+
+surface.add([{
+    type: 'circle',
+    radius: 10,
+    fill: '#f00',
+    x: 10,
+    y: 10,
+    group: 'circles'
+}, {
+    type: 'circle',
+    radius: 10,
+    fill: '#0f0',
+    x: 50,
+    y: 50,
+    group: 'circles'
+}, {
+    type: 'circle',
+    radius: 10,
+    fill: '#00f',
+    x: 100,
+    y: 100,
+    group: 'circles'
+}, {
+    type: 'rect',
+    width: 20,
+    height: 20,
+    fill: '#f00',
+    x: 10,
+    y: 10,
+    group: 'rectangles'
+}, {
+    type: 'rect',
+    width: 20,
+    height: 20,
+    fill: '#0f0',
+    x: 50,
+    y: 50,
+    group: 'rectangles'
+}, {
+    type: 'rect',
+    width: 20,
+    height: 20,
+    fill: '#00f',
+    x: 100,
+    y: 100,
+    group: 'rectangles'
+}]);
+
+// Get references to my groups
+circles = surface.getGroup('circles');
+rectangles = surface.getGroup('rectangles');
+
+// Animate the circles down
+circles.animate({
+    duration: 1000,
+    to: {
+        translate: {
+            y: 200
+        }
+    }
+});
+
+// Animate the rectangles across
+rectangles.animate({
+    duration: 1000,
+    to: {
+        translate: {
+            x: 200
+        }
+    }
+});});
+    </script>  
+    </head>  
+    <body>  
+    
+    </body>  
+    </html>  

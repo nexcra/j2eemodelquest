@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+<script src="../jquery/1.7.2.min.js"></script>
+<script src="../jquery/plugins/jquery.svg.js"></script>
+<script src="../jquery/plugins/jquery.svgdom.js"></script>
+<style>
+svg {
+  border: 1px solid #ddd;
+  margin: 10px;
+  padding: 0;
+}
+</style>
+
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="border:1px solid red; width:800px;height:600px;">
+	<defs>
+		<circle  id="start"   cx="50" cy="50" r="10" fill="black" />
+		<circle  id="end"   cx="50" cy="50" r="10" stroke="black" stroke-width="4" fill="white" />
+		<rect id="node" x="0" y="0" width="40" height="20" fill="white" stroke="black" stroke-width="2" />
+		<rect id="tasknode" x="0" y="0" width="40" height="20"  rx="10" ry="10" fill="white" stroke="black" stroke-width="2" />
+		<ellipse id="tasknodepool" cx="0" cy="0" rx="20" ry="10" fill="white" stroke="black" stroke-width="2" />
+		<polygon id="decision" x="0" y="0" points="50,0 67,14 59,30 40,30 32,14" fill="white" stroke="black" stroke-width="2"/>
+		<g id="fork">
+			<line x1="50" y1="0" x2="50" y2="10" stroke="black" stroke-width="2" />
+			<line x1="30" y1="10" x2="70" y2="10" stroke="black" stroke-width="2" />
+			<line x1="40" y1="10" x2="40" y2="20" stroke="black" stroke-width="2" />
+			<line x1="60" y1="10" x2="60" y2="20" stroke="black" stroke-width="2" />
+		</g>
+		<g id="join">
+			<line x1="40" y1="0" x2="40" y2="10" stroke="black" stroke-width="2" />
+			<line x1="60" y1="0" x2="60" y2="10" stroke="black" stroke-width="2" />
+			<line x1="30" y1="10" x2="70" y2="10" stroke="black" stroke-width="2" />
+			<line x1="50" y1="10" x2="50" y2="20" stroke="black" stroke-width="2" />
+		</g>
+		<line id="transition" x1="0" y1="0" x2="40" y2="0" stroke="black" stroke-width="2" />
+	</defs>
+	<title></title>
+	<rect id="patternPanel" x="0" y="0" width="100" height="450" fill="lightgray"></rect>
+	<g transform="translate(0,10)" id="p_start">
+		<use xlink:href="#start" />
+	</g>
+	<g transform="translate(0,50)">
+		<use xlink:href="#end" />
+	</g>
+	<g transform="translate(30,130)">
+		<use xlink:href="#node" />
+	</g>
+	
+	<g transform="translate(30,170)">
+		<use xlink:href="#tasknode" />
+	</g>
+	
+	<g transform="translate(50,220)">
+		<use xlink:href="#tasknodepool" />
+	</g>
+	<g transform="translate(0,250)">
+		<use xlink:href="#decision" />
+	</g>
+	<g transform="translate(0,300)">
+		<use xlink:href="#fork" />
+	</g>
+	<g transform="translate(0,350)">
+		<use xlink:href="#join" />
+	</g>
+	<g transform="translate(30,400)">
+		<use xlink:href="#transition" />
+	</g>
+</svg>
+
+<script>
+console.log($('#p_start'));
+$("#p_start").click(function() {
+    $(this).addClass("clicked");
+    console.log('Classes:', this.className.baseVal);
+});
+</script>
+
+</body>
+</html>
