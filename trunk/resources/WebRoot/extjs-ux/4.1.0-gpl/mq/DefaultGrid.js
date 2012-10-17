@@ -357,7 +357,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 					width : 600,
 					layout : 'fit',
 					shadow : true,
-					modal : false
+					modal : true
 				};
 
 				Ext.apply(win, me.input.cfg.formWindow || {});
