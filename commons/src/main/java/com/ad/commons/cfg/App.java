@@ -17,6 +17,7 @@ public interface App {
 	String EXTJS_DATATYPE_FLOAT = "float";
 	String EXTJS_DATATYPE_BOOLEAN = "boolean";
 	String EXTJS_DATATYPE_DATE = "date";
+	String EXTJS_DATATYPE_LIST = "list";
 
 	String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
 	String DEFAULT_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
