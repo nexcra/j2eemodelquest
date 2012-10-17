@@ -176,6 +176,11 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 						sb.append("=");
 					}
 					sb.append("'").append(filter.getValue()).append("' AND ");
+				}else if (App.EXTJS_DATATYPE_LIST.equalsIgnoreCase(filter.getType())) {
+					sb.append("MQ_.").append(filter.getField()).append(" IN ('");
+					String value =filter.getValue();
+					value =StringUtils.replace(value, ",", "','");
+					sb.append(value).append("') AND ");
 				}
 			}
 			sb.append(" 1=1 ");
