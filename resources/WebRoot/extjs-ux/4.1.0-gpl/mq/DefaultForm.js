@@ -38,7 +38,7 @@ Ext.define('com.ad.mq.DefaultForm', {
 				var _auth = me.input.auth;
 				var _data = me.input.data;
 				var _extraParams = Ext.clone(me.input.grid.oView.getStore().getProxy().extraParams);
-
+				
 				me.items = me.getFormItems(me.input);
 				// var input = me.cfg;
 				// var formCfg = _cfg.form || {};
