@@ -38,8 +38,25 @@ Ext.define('com.ad.mq.DefaultForm', {
 				var _auth = me.input.auth;
 				var _data = me.input.data;
 				var _extraParams = Ext.clone(me.input.grid.oView.getStore().getProxy().extraParams);
-				
-				me.items = me.getFormItems(me.input);
+				me.layout = 'border';
+
+				me.items = [{
+							region : 'north',
+							bodyStyle : 'padding:0 0 0 10px;background-color:yellow;',
+							height:20,
+							itemId : 'msgpanel',
+							items:{
+								itemId :'msgbox' ,
+								xtype : 'displayfield',
+								value :':)'
+							}
+						}, {
+							region : 'center',
+							layout : 'anchor',
+							border:0,
+							items : me.getFormItems(me.input)
+						}];
+
 				// var input = me.cfg;
 				// var formCfg = _cfg.form || {};
 				Ext.apply(me, _cfg.form || {});
@@ -75,20 +92,28 @@ Ext.define('com.ad.mq.DefaultForm', {
 															me.up('window').destroy();
 														}
 													} else {
-														Ext.Msg.alert('警告', rtn.message);
+														var mb = cmp.getComponent('msgpanel').getComponent('msgbox');
+														mb.setValue('警告:'+rtn.message);
+//														Ext.Msg.alert('警告', rtn.message);
 													}
 												},
 												failure : function(form, action) {
-													me.setActive(false);
+//													me.setActive(false);
+													var mb = me.getComponent('msgpanel').getComponent('msgbox');
+													mb.setFieldStyle({color:'red'});
 													switch (action.failureType) {
 														case Ext.form.action.Action.CONNECT_FAILURE :
-															Ext.Msg.alert('错误', '操作无法完成，请检查你的数据项!');
+//														me.getCmp('msgbox').setValue(rtn.message);
+//															Ext.Msg.alert('错误', '操作无法完成，请检查你的数据项!');
+															mb.setValue('错误:操作无法完成，请检查你的数据项!');
 															break;
 														case Ext.form.action.Action.SERVER_INVALID :
-															Ext.Msg.alert('错误', '操作无法完成，请检查你的数据项!!');
+//															Ext.Msg.alert('错误', '操作无法完成，请检查你的数据项!!');
+															mb.setValue('错误:操作无法完成，请检查你的数据项!!');
 															break;
 														default :
-															Ext.Msg.alert('错误', '操作无法完成，请检查你的数据项!!!');
+//															Ext.Msg.alert('错误', '操作无法完成，请检查你的数据项!!!');
+															mb.setValue('错误:操作无法完成，请检查你的数据项!!!');
 
 													}
 												}
