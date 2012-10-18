@@ -74,7 +74,7 @@ Ext.define('com.ad.mq.DefaultForm', {
 												$actionid : me.input.grid.oRecord ? updateActionId : insertActionId,
 												$dataid : _dataid
 											});
-									var mb = cmp.getComponent('msgpanel').getComponent('msgbox');
+									var mb = me.getComponent('msgpanel').getComponent('msgbox');
 									mb.setFieldStyle({color:''});
 									form.submit({
 												waitTitle : '请稍候',
