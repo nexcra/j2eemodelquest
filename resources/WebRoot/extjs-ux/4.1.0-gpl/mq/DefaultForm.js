@@ -48,7 +48,7 @@ Ext.define('com.ad.mq.DefaultForm', {
 							items:{
 								itemId :'msgbox' ,
 								xtype : 'displayfield',
-								value :':)'
+								value : _cfg.form.msg? _cfg.form.msg: ':-)'
 							}
 						}, {
 							region : 'center',
@@ -57,11 +57,8 @@ Ext.define('com.ad.mq.DefaultForm', {
 							items : me.getFormItems(me.input)
 						}];
 
-				// var input = me.cfg;
-				// var formCfg = _cfg.form || {};
 				Ext.apply(me, _cfg.form || {});
 				me.buttons = [];
-				// var type = me.cfg.auth || input.cfg.grid.type || 0;
 
 				if (((_auth & 4) === 4) || ((_auth & 1) === 1)) {
 
@@ -77,14 +74,17 @@ Ext.define('com.ad.mq.DefaultForm', {
 												$actionid : me.input.grid.oRecord ? updateActionId : insertActionId,
 												$dataid : _dataid
 											});
+									var mb = cmp.getComponent('msgpanel').getComponent('msgbox');
+									mb.setFieldStyle({color:''});
 									form.submit({
 												waitTitle : '请稍候',
-												waitMsg : '正在验证...',
+												waitMsg : '处理中...',
 												url : 'mq',
 												params : _extraParams,
 												success : function(form, action) {
 													var rtn = Ext.JSON.decode(action.response.responseText || '{}');
 													if (rtn.session) {
+														mb.setValue('处理成功！');
 														if (me.input.grid.oRecord)
 															me.input.grid.oView.store.load();
 														else {
@@ -92,27 +92,20 @@ Ext.define('com.ad.mq.DefaultForm', {
 															me.up('window').destroy();
 														}
 													} else {
-														var mb = cmp.getComponent('msgpanel').getComponent('msgbox');
+														
 														mb.setValue('警告:'+rtn.message);
-//														Ext.Msg.alert('警告', rtn.message);
 													}
 												},
 												failure : function(form, action) {
-//													me.setActive(false);
-													var mb = me.getComponent('msgpanel').getComponent('msgbox');
 													mb.setFieldStyle({color:'red'});
 													switch (action.failureType) {
 														case Ext.form.action.Action.CONNECT_FAILURE :
-//														me.getCmp('msgbox').setValue(rtn.message);
-//															Ext.Msg.alert('错误', '操作无法完成，请检查你的数据项!');
 															mb.setValue('错误:操作无法完成，请检查你的数据项!');
 															break;
 														case Ext.form.action.Action.SERVER_INVALID :
-//															Ext.Msg.alert('错误', '操作无法完成，请检查你的数据项!!');
 															mb.setValue('错误:操作无法完成，请检查你的数据项!!');
 															break;
 														default :
-//															Ext.Msg.alert('错误', '操作无法完成，请检查你的数据项!!!');
 															mb.setValue('错误:操作无法完成，请检查你的数据项!!!');
 
 													}
