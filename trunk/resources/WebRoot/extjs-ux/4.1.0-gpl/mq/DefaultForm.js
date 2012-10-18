@@ -107,7 +107,7 @@ Ext.define('com.ad.mq.DefaultForm', {
 															break;
 														default :
 															mb.setValue('错误:操作无法完成，请检查你的数据项!!!');
-
+															break;
 													}
 												}
 											});
