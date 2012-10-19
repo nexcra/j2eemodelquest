@@ -54,7 +54,7 @@ Ext.define('Ext.ux.grid.filter.DateFilter', {
      * The date format to return when using getValue.
      * Defaults to 'm/d/Y'.
      */
-    dateFormat : 'm/d/Y',
+    dateFormat : 'y-m-d',
 
     /**
      * @cfg {Date} maxDate
