@@ -92,7 +92,7 @@ menuItemCfgs : {
      * </pre>
      */
     menuItemCfgs : {
-        emptyText: 'Enter Number...',
+        emptyText: '录入数字...',
         selectOnFocus: false,
         width: 155
     },
