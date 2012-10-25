@@ -218,7 +218,7 @@ public class MQControl extends HttpServlet {
 								try {
 									data = JSONObject.fromObject(data, jc);
 								} catch (Exception e) {
-									LOG.error(data);
+//									LOG.error(data);
 									LOG.error(e);
 								}
 							}
@@ -353,7 +353,7 @@ public class MQControl extends HttpServlet {
 					}
 
 				}
-				if (Logger.getRootLogger().isDebugEnabled()) {
+				if (LOG.isDebugEnabled()) {
 					LOG.debug("fieldName:" + fieldName + ",value=" + value);
 				}
 				if (null == value) {
