@@ -15,7 +15,7 @@
 // data: data //数据源在MQ$ELEMENT中的数据
 // };
 
-// type: -1/0->查询 ;1->新增; 2->删除 ; 4->编辑, 8->编辑[只读]
+// type: -1/0->查询 ;1->新增; 2->删除 ; 4->编辑, 8->编辑[只读], 16->分组统计
 //
 //
 
@@ -23,6 +23,12 @@ Ext.define('com.ad.mq.DefaultGrid', {
 			extend : 'Ext.grid.Panel',
 			autoScroll : true,
 			border : false,
+			msgLabelField : null,
+			msgType : {
+				NOM : 0,
+				WRN : 1,
+				ERR : 2
+			},
 			// stateful : true,
 			// stateId : 'DataObjectGrid',
 			// loadMask : true,
@@ -33,7 +39,8 @@ Ext.define('com.ad.mq.DefaultGrid', {
 			config : {
 				input : null,
 				_localcfgToken : null,
-				_localcfgName : null
+				_localcfgName : null,
+				_localcfgAuthName : null
 			},
 			constructor : function(cfg) {
 				this.callParent(arguments);
@@ -120,6 +127,13 @@ Ext.define('com.ad.mq.DefaultGrid', {
 								handler : me.onDeleteClick
 							});
 				}
+
+				if ((_auth & 16) === 16) {
+					tbarItems.push(Ext.create('com.ad.button.ReportBtn', {
+								_grid : me
+							}));
+					me.enableLocking = true;
+				}
 				var tbarItemClazz = _cfg.grid.tbarItems || [];
 
 				if (tbarItemClazz.length > 0) {
@@ -201,7 +215,10 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				}
 
 				var bbarItemClazz = _cfg.grid.bbarItems || [];
-				var bbarItems = [];
+				me.msgLabelField = Ext.create('Ext.form.field.Display', {
+							value : ':)'
+						});
+				var bbarItems = [me.msgLabelField];
 				if (bbarItemClazz.length > 0) {
 					var newObject;
 					for (var i = 0, len = bbarItemClazz.length; i < len; i++) {
@@ -243,6 +260,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 								if (!localcfg)
 									return;
 								var datas = localcfg.data;
+								column.hidden = true;
 								for (var i = 0, len = datas.length; i < len; i++) {
 									if (datas[i].id === column.eleid) {
 										datas[i].gridshow = false;
@@ -289,6 +307,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 								if (!localcfg)
 									return;
 								var datas = localcfg.data;
+								column.hidden = false;
 								for (var i = 0, len = datas.length; i < len; i++) {
 									if (datas[i].id === column.eleid) {
 										datas[i].gridshow = true;
@@ -296,10 +315,52 @@ Ext.define('com.ad.mq.DefaultGrid', {
 										return;
 									}
 								}
+							},
+							lockcolumn : function(panel, column, eOpts) {
+								var _store = panel.getStore();
+								var isGroup = _store.remoteGroup;
+								if (!isGroup)
+									return;
+								me.doGroup(_store, panel);
+							},
+							unlockcolumn : function(panel, column, eOpts) {
+								var _store = panel.getStore();
+								var isGroup = _store.remoteGroup;
+								if (!isGroup)
+									return;
+								me.doGroup(_store, panel);
 							}
 						});
 
 				me.callParent();
+			},
+			doGroup : function(_store, _grid) {
+				// _store.group('id');
+				// _store.group(['id','name']);
+				var me = this;
+				var groupArr = [];
+				var clmns = _grid.query('gridcolumn');
+				var hasLocked = false;
+				for (var i = 0, len = clmns.length; i < len; i++) {
+					if (clmns[i].isHidden())
+						continue;
+					if (clmns[i].locked) {
+						groupArr.push(clmns[i].dataIndex);
+						hasLocked = true;
+					} else {
+						if (!(clmns[i].ftype === 'int' || clmns[i].ftype === 'integer' || clmns[i].ftype === 'number' || clmns[i].ftype === 'float')) {
+							me.showMsg('统计项存在非数字列请锁住或隐藏！' ,me.msgType.ERR);
+							return true;
+						} else {
+							groupArr.push('_' + clmns[i].dataIndex);
+						}
+
+					}
+				}
+				if (hasLocked && !Ext.isEmpty(groupArr)) {
+					_store.group(groupArr);
+					me.showMsg('分组统计完成！' );
+				}
 			},
 			getLocalCfg : function() {
 				var me = this, localStorage = com.ad.getLocalStorage();
@@ -378,24 +439,26 @@ Ext.define('com.ad.mq.DefaultGrid', {
 						$actionid : deleteActionId,
 						$dataid : me.input.dataid
 					};
-					if (me.idProperty.constructor == String) {
-						if (!selection.get(me.idProperty)) {
-							Ext.Msg.alert('错误', '定义的主键【' + me.idProperty + '】没有找到值！');
-							return;
-						}
-						Ext.apply(params, Ext.JSON.decode('{' + me.idProperty + ':' + selection.get(me.idProperty) + '}') || {});
-
-					} else if (me.idProperty.constructor == Array) {
-						for (var i = 0, len = me.idProperty.length; i < len; i++) {
-							if (!selection.get(me.idProperty[i])) {
-								Ext.Msg.alert('错误', '定义的主键【' + me.idProperty[i] + '】没有找到值！');
+					switch (Ext.type(me.idProperty)) {
+						case 'string' :
+							if (!selection.get(me.idProperty)) {
+								Ext.Msg.alert('错误', '定义的主键【' + me.idProperty + '】没有找到值！');
 								return;
 							}
-							Ext.apply(params, Ext.JSON.decode('{' + me.idProperty[i] + ':' + selection.get(me.idProperty[i]) + '}') || {});
-						}
-					} else {
-						Ext.Msg.alert('错误', '定义的【idProperty = ' + me.idProperty + '】无效！');
-						return;
+							Ext.apply(params, Ext.JSON.decode('{' + me.idProperty + ':' + selection.get(me.idProperty) + '}') || {});
+							break;
+						case 'array' :
+							for (var i = 0, len = me.idProperty.length; i < len; i++) {
+								if (!selection.get(me.idProperty[i])) {
+									Ext.Msg.alert('错误', '定义的主键【' + me.idProperty[i] + '】没有找到值！');
+									return;
+								}
+								Ext.apply(params, Ext.JSON.decode('{' + me.idProperty[i] + ':' + selection.get(me.idProperty[i]) + '}') || {});
+							}
+							break;
+						default :
+							Ext.Msg.alert('错误', '定义的【idProperty = ' + me.idProperty + '】无效！');
+							return;
 					}
 
 					Ext.Msg.confirm('提醒', '确定要删除选中的记录？', function(btn, text) {
@@ -451,7 +514,8 @@ Ext.define('com.ad.mq.DefaultGrid', {
 								dataIndex : value.fieldvalue,
 								text : value.fieldname,
 								eleid : value.id,
-								gridindex : value.gridindex
+								gridindex : value.gridindex,
+								ftype : value.ftype
 							};
 							if (value.columnattrs) {
 								Ext.apply(column, Ext.JSON.decode(value.columnattrs) || {});
@@ -479,5 +543,38 @@ Ext.define('com.ad.mq.DefaultGrid', {
 					this.down('#_grid_refersh').setDisabled(bool);
 				if (this.down('#refresh'))
 					this.down('#refresh').setDisabled(bool);
+			},
+			getMsgLabel : function() {
+				return this.msgLabelField;
+			},
+			showMsg : function(msg, type) {
+				var me = this;
+				var msgLabel = me.getMsgLabel();
+				if (Ext.isEmpty(msgLabel))
+					return;
+				switch (type) {
+					case me.msgType.NOM :
+						msgLabel.setFieldStyle({
+									color : ''
+								});
+						break;
+					case me.msgType.WRN :
+						msgLabel.setFieldStyle({
+									color : 'yellow'
+								});
+						break;
+					case me.msgType.ERR :
+						msgLabel.setFieldStyle({
+									color : 'red'
+								});
+						break;
+					default :
+						msgLabel.setFieldStyle({
+									color : ''
+								});
+						break;
+				}
+				msgLabel.setValue(msg);
+				// msgLabel.toggle(false);
 			}
 		});
