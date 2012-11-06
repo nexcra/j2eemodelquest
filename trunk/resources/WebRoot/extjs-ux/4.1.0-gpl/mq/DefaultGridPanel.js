@@ -20,7 +20,8 @@ Ext.define('com.ad.mq.DefaultGridPanel', {
 				_autoLoad : true,
 				_auth : 0,
 				_localcfgToken : null ,
-				_localcfgName : null
+				_localcfgName : null,
+				_localcfgAuthName : null 
 			},
 			constructor : function(cfg) {
 				this.callParent(arguments);
@@ -31,13 +32,16 @@ Ext.define('com.ad.mq.DefaultGridPanel', {
 				var me = this, 
 				localStorage = com.ad.getLocalStorage(), 
 				token = -1, 
-				tokenName = Ext.Loader.getConfig('appName') + '$' +(me._localcfgToken || ('data_' + me._dataid + '_token')), 
+				tokenName = Ext.Loader.getConfig('appName') + '$' +(me._localcfgToken || ('data_' + me._dataid + '$token')), 
 				localCfg = null, 
-				localCfgName = Ext.Loader.getConfig('appName') + '$' + (me._localcfgName || 'data_' + me._dataid);
+				localCfgName = Ext.Loader.getConfig('appName') + '$' + (me._localcfgName || ('data_' + me._dataid)),
+				storeAuth = 0,
+				storeAuthName = Ext.Loader.getConfig('appName') + '$' + (me._localcfgAuthName || ('data_' + me._dataid + '$auth'));
 
 				if (localStorage) {
 					token = localStorage.getItem(tokenName) || -1;
 					localCfg = localStorage.getItem(localCfgName);
+					storeAuth = localStorage.getItem(storeAuthName) || 0;
 					if (localCfg){
 						localCfg = Ext.JSON.decode(localCfg);
 						if (!localCfg.data){
@@ -61,6 +65,10 @@ Ext.define('com.ad.mq.DefaultGridPanel', {
 										localStorage.setItem(tokenName, dd.token);
 										localCfg = dd;
 									}
+									if (dd.auth != storeAuth){
+										localStorage.setItem(storeAuthName, dd.auth);
+										storeAuth = dd.auth;
+									}
 								} else {
 									localCfg = dd;
 								}
@@ -71,12 +79,13 @@ Ext.define('com.ad.mq.DefaultGridPanel', {
 										data : localCfg.data,
 										cfg : Ext.JSON.decode(localCfg.cfg || {}),
 										dataid : me._dataid,
-										auth : (me._auth || localCfg.auth || 0)
+										auth : (me._auth || storeAuth || 0)
 									};
 									var grid = Ext.create('com.ad.mq.DefaultGrid', Ext.apply({
 														input : cfg,
 														_localcfgToken : tokenName ,
-														_localcfgName : localCfgName
+														_localcfgName : localCfgName,
+														_localcfgAuthName : storeAuthName 
 													}, me._gridcfg));
 									me._gridpanel = grid;
 									me.add(grid).show();
