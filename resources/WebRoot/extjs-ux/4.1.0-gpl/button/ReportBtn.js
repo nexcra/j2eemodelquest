@@ -30,13 +30,15 @@ Ext.define('com.ad.button.ReportBtn', {
 						// grid.showMsg('没有找到可用于分组统计的数字型字段!', me.msgType.ERR);
 						// return;
 						// }
+						grid.grouping = true;
 						store.remoteGroup = true;
-						store.remoteSort = false;
-						grid.doGroup(store, grid);
+//						store.remoteSort = false;
+						grid.preGroup(grid);
 //						grid.showMsg('请将需要分组的列锁住!');
 					} else {
+						grid.grouping = false;
 						store.remoteGroup = false;
-						store.remoteSort = true;
+//						store.remoteSort = true;
 //						store.load();
 						grid.showMsg(':)');
 					}
