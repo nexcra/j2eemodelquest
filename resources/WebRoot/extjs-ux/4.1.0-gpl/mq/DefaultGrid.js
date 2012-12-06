@@ -23,6 +23,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 			extend : 'Ext.grid.Panel',
 			autoScroll : true,
 			border : false,
+			grouping : false,
 			msgLabelField : null,
 			msgType : {
 				NOM : 0,
@@ -59,10 +60,13 @@ Ext.define('com.ad.mq.DefaultGrid', {
 
 				Ext.apply(me, _cfg.grid || {});
 
-				me.features = Ext.create('Ext.ux.grid.FiltersFeature', {
-							encode : true
-						});
+				
 				me.columns = me.getColumnsCfg(_data);
+				me.features = [{
+							ftype : 'filters',
+							encode : true, 
+							local : false
+						}];
 				var fields = me.getFieldsCfg(_data);
 
 				var modelName = 'Model_' + _dataid;
@@ -256,6 +260,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 
 				me.listeners = Ext.apply(me.listeners || {}, {
 							columnhide : function(ct, column, eOpts) {
+								me.preGroup(me);
 								var localcfg = me.getLocalCfg();
 								if (!localcfg)
 									return;
@@ -268,6 +273,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 										return;
 									}
 								}
+
 							},
 							columnmove : function(ct, column, fromIdx, toIdx, eOpts) {
 								var localcfg = me.getLocalCfg();
@@ -284,6 +290,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 									}
 								}
 								me.setLocalCfg(Ext.JSON.encode(localcfg));
+
 							},
 							columnresize : function(ct, column, width, eOpts) {
 								var localcfg = me.getLocalCfg();
@@ -301,8 +308,10 @@ Ext.define('com.ad.mq.DefaultGrid', {
 										return;
 									}
 								}
+
 							},
 							columnshow : function(ct, column, eOpts) {
+								me.preGroup(me);
 								var localcfg = me.getLocalCfg();
 								if (!localcfg)
 									return;
@@ -315,32 +324,35 @@ Ext.define('com.ad.mq.DefaultGrid', {
 										return;
 									}
 								}
+
 							},
 							lockcolumn : function(panel, column, eOpts) {
-								var _store = panel.getStore();
-								var isGroup = _store.remoteGroup;
-								if (!isGroup)
-									return;
-								me.doGroup(_store, panel);
+								me.preGroup(panel);
 							},
 							unlockcolumn : function(panel, column, eOpts) {
-								var _store = panel.getStore();
-								var isGroup = _store.remoteGroup;
-								if (!isGroup)
-									return;
-								me.doGroup(_store, panel);
+								me.preGroup(panel);
 							}
 						});
-
+				
 				me.callParent();
+			},
+			preGroup : function(panel) {
+				var me = this;
+				var _store = panel.getStore();
+				// var isGroup = _store.remoteGroup;
+				if (!me.grouping)
+					return;
+				me.doGroup(_store, panel);
 			},
 			doGroup : function(_store, _grid) {
 				// _store.group('id');
 				// _store.group(['id','name']);
+
 				var me = this;
 				var groupArr = [];
 				var clmns = _grid.query('gridcolumn');
 				var hasLocked = false;
+				// me.getStore().clearGrouping();
 				for (var i = 0, len = clmns.length; i < len; i++) {
 					if (clmns[i].isHidden())
 						continue;
@@ -349,17 +361,35 @@ Ext.define('com.ad.mq.DefaultGrid', {
 						hasLocked = true;
 					} else {
 						if (!(clmns[i].ftype === 'int' || clmns[i].ftype === 'integer' || clmns[i].ftype === 'number' || clmns[i].ftype === 'float')) {
-							me.showMsg('统计项存在非数字列请锁住或隐藏！' ,me.msgType.ERR);
+							me.showMsg('统计项存在非数字列请锁住或隐藏！', me.msgType.ERR);
 							return true;
 						} else {
-							groupArr.push('_' + clmns[i].dataIndex);
+							switch (Ext.type(me.idProperty)) {
+								case 'string' :
+									if (clmns[i].dataIndex === me.idProperty) {
+										groupArr.push('*' + clmns[i].dataIndex);
+									}
+									break;
+								case 'array' :
+									for (var j = 0, l = me.idProperty.length; i < l; i++) {
+										if (clmns[i].dataIndex === me.idProperty[j]) {
+											groupArr.push('*' + clmns[i].dataIndex);
+											break;
+										}
+									}
+									break;
+								default :
+									groupArr.push('_' + clmns[i].dataIndex);
+									break;
+							}
+
 						}
 
 					}
 				}
 				if (hasLocked && !Ext.isEmpty(groupArr)) {
 					_store.group(groupArr);
-					me.showMsg('分组统计完成！' );
+					me.showMsg('分组统计完成！');
 				}
 			},
 			getLocalCfg : function() {
