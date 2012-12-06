@@ -10,7 +10,7 @@ import javax.persistence.Id;
  * @author YMQ
  *
  */
-@Entity(name = "WORKFLOW_NODE_POOL")
+@Entity(name = "WORKFLOW$NODE$POOL")
 public class WorkFlowNodePool implements Serializable {
 
 	private static final long serialVersionUID = 1L;

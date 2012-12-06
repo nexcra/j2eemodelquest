@@ -14,7 +14,7 @@ import javax.persistence.SequenceGenerator;
  * @author YMQ
  * 
  */
-@Entity(name = "WORKFLOW_NODE_VIEW")
+@Entity(name = "WORKFLOW$NODE$VIEW")
 public class WorkFlowNodeView implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id

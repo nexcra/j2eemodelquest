@@ -15,7 +15,7 @@ import javax.persistence.SequenceGenerator;
  * @author YMQ
  * 
  */
-@Entity(name = "WORKFLOW_DOCUMENT_STEPS_SUSP")
+@Entity(name = "WORKFLOW$DOCUMENT$STEPS_SUSP")
 public class WorkFlowDocumentStepSusp implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
