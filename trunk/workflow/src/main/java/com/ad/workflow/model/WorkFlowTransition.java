@@ -13,7 +13,7 @@ import javax.persistence.SequenceGenerator;
  * @author YMQ
  *
  */
-@Entity(name="WORKFLOW_TRANSITION")
+@Entity(name="WORKFLOW$TRANSITION")
 public class WorkFlowTransition implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id
