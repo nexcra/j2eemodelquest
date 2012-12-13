@@ -1,7 +1,6 @@
 package com.ad.report.model.view;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Id;
 import javax.persistence.Transient;
@@ -12,7 +11,7 @@ public class VUser implements Serializable {
 	@Id
 	private String id;
 	private String text;
-	private String folder;
+	private String cls;
 	private Boolean expanded;
 	@Transient
 	private Boolean leaf;
@@ -20,8 +19,17 @@ public class VUser implements Serializable {
 
 	private String parentid;
 
-	@Transient
-	private List<VUser> children;
+	private String rmk;
+	
+	
+	
+	public String getRmk() {
+		return rmk;
+	}
+
+	public void setRmk(String rmk) {
+		this.rmk = rmk;
+	}
 
 	public String getParentid() {
 		return parentid;
@@ -47,12 +55,13 @@ public class VUser implements Serializable {
 		this.text = text;
 	}
 
-	public String getFolder() {
-		return folder;
+
+	public String getCls() {
+		return cls;
 	}
 
-	public void setFolder(String folder) {
-		this.folder = folder;
+	public void setCls(String cls) {
+		this.cls = cls;
 	}
 
 	public Boolean getExpanded() {
@@ -77,14 +86,6 @@ public class VUser implements Serializable {
 
 	public void setChecked(Boolean checked) {
 		this.checked = checked;
-	}
-
-	public List<VUser> getChildren() {
-		return children;
-	}
-
-	public void setChildren(List<VUser> children) {
-		this.children = children;
 	}
 
 }
