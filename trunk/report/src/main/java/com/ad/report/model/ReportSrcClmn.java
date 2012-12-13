@@ -3,17 +3,22 @@ package com.ad.report.model;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 @Entity(name = "REPORT$SRC_CLMN")
 public class ReportSrcClmn implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@Id
+	@Id 
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ")
+	@SequenceGenerator(name = "SEQ", sequenceName = "SEQ_REPORT$SRC_CLMN_ID")
 	private Integer id;
 	private Integer srcid;
 	private String clmnname;
 	private String labelname;
-	private Integer datatype;
+	private String datatype;
 
 	public Integer getId() {
 		return id;
@@ -47,11 +52,11 @@ public class ReportSrcClmn implements Serializable {
 		this.labelname = labelname;
 	}
 
-	public Integer getDatatype() {
+	public String getDatatype() {
 		return datatype;
 	}
 
-	public void setDatatype(Integer datatype) {
+	public void setDatatype(String datatype) {
 		this.datatype = datatype;
 	}
 
