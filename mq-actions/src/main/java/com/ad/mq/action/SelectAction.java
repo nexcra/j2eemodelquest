@@ -22,6 +22,7 @@ import com.ad.mq.interceptor.RequestAware;
 import com.ad.mq.interceptor.SessionAware;
 import com.ad.mq.model.DataObject;
 import com.ad.mq.model.Filter;
+import com.ad.mq.model.Grouper;
 import com.ad.mq.model.OutData;
 import com.ad.mq.model.Sorter;
 
@@ -34,7 +35,7 @@ import com.ad.mq.model.Sorter;
 public class SelectAction extends ActionSupport implements DataBaseAware, ApplicationAware, RequestAware, SessionAware {
 
 	protected Integer $dataid;// 数据源编号
-//	protected Integer did;// 数据源结构dataid
+	// protected Integer did;// 数据源结构dataid
 	protected DBControl db;
 	protected Map<String, Object> session;
 	protected Map<String, Object> request;
@@ -47,7 +48,8 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 	protected String $sort;
 	protected String $queryvalue;
 	protected String $querynames;
-//	protected String dataCfg;
+	protected String $group;
+	// protected String dataCfg;
 
 	private final Logger log = Logger.getLogger(SelectAction.class);
 
@@ -65,9 +67,9 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 		this.$dataid = $dataid;
 	}
 
-//	public void setDid(Integer did) {
-//		this.did = did;
-//	}
+	// public void setDid(Integer did) {
+	// this.did = did;
+	// }
 
 	/**
 	 * 模糊查询值
@@ -110,7 +112,7 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 		putSQL();
 		List<?> list = this.db.query2BeanList(this.sql, clzz, datas.toArray());
 		OutData od = new OutData();
-//		od.setCfg(this.dataCfg);
+		// od.setCfg(this.dataCfg);
 		od.setData(list);
 		this.out = od;
 
@@ -135,10 +137,11 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 		clzz = Class.forName(beanName);
 		putFilterAndSorter();
 
-//		if (null != this.did) {// 查询配制信息时
-//			DataObject dObj = (DataObject) this.db.query2Bean(this.cfg, DataObject.class, new Object[] { this.did });
-//			this.dataCfg = dObj.getCfg();
-//		}
+		// if (null != this.did) {// 查询配制信息时
+		// DataObject dObj = (DataObject) this.db.query2Bean(this.cfg,
+		// DataObject.class, new Object[] { this.did });
+		// this.dataCfg = dObj.getCfg();
+		// }
 	}
 
 	/**
@@ -176,10 +179,10 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 						sb.append("=");
 					}
 					sb.append("'").append(filter.getValue()).append("' AND ");
-				}else if (App.EXTJS_DATATYPE_LIST.equalsIgnoreCase(filter.getType())) {
+				} else if (App.EXTJS_DATATYPE_LIST.equalsIgnoreCase(filter.getType())) {
 					sb.append("MQ_.").append(filter.getField()).append(" IN ('");
-					String value =filter.getValue();
-					value =StringUtils.replace(value, ",", "','");
+					String value = filter.getValue();
+					value = StringUtils.replace(value, ",", "','");
 					sb.append(value).append("') AND ");
 				}
 			}
@@ -205,6 +208,29 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 		this.sql = sb.toString();
 		if (!StringUtils.isEmpty(this.$queryvalue) && !StringUtils.isEmpty(this.$querynames)) {
 			this.sql = "SELECT * FROM (" + this.sql + ") WHERE " + this.$querynames + "LIKE '%" + this.$queryvalue + "%'";
+		}
+
+		if (!StringUtils.isEmpty(this.$group)) {
+			Object[] jsonArray = JSONArray.fromObject(this.$group).toArray();
+			JSONObject jsonObject = null;
+			Grouper group;
+			StringBuffer groupSqlBuf = new StringBuffer("Select ");
+			StringBuffer groupByBuf = new StringBuffer("GROUP BY ");
+			for (Object grouper : jsonArray) {
+				jsonObject = JSONObject.fromObject(grouper);
+				group = (Grouper) JSONObject.toBean(jsonObject, Grouper.class);
+				if ("_".equals(StringUtils.substring(group.getProperty(), 0, 1))) {
+					groupSqlBuf.append("SUM(").append(StringUtils.substring(group.getProperty(), 1)).append(") AS ").append(StringUtils.substring(group.getProperty(), 1)).append(",");
+				} else if ("*".equals(StringUtils.substring(group.getProperty(), 0, 1))) {
+					groupSqlBuf.append("COUNT(").append(StringUtils.substring(group.getProperty(), 1)).append(") AS ").append(StringUtils.substring(group.getProperty(), 1)).append(",");
+				} else {
+					groupSqlBuf.append(group.getProperty()).append(",");
+					groupByBuf.append(group.getProperty()).append(",");
+				}
+			}
+			groupSqlBuf.append("1");
+			groupByBuf.append("1");
+			this.sql = groupSqlBuf.append(" FROM (").append(this.sql).append(")").append(groupByBuf).toString();
 		}
 		if (log.isDebugEnabled()) {
 			log.debug(this.sql);
@@ -269,6 +295,10 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 	@Override
 	public void setApplication(Map<String, Object> application) {
 		this.application = application;
+	}
+
+	public void set$group(String $group) {
+		this.$group = $group;
 	}
 
 }
