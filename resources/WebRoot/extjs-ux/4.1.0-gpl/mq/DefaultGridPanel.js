@@ -101,5 +101,8 @@ Ext.define('com.ad.mq.DefaultGridPanel', {
 						});
 
 				me.callParent();
+			},
+			getGrid:function(){
+				return this._gridpanel;
 			}
 		});

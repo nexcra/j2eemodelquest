@@ -85,5 +85,8 @@ Ext.define('com.ad.mq.DefaultEditGridPanel', {
 						});
 
 				me.callParent();
+			},
+			getGrid:function(){
+				return this._gridpanel;
 			}
 		});
