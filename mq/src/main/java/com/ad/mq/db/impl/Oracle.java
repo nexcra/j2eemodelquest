@@ -1,9 +1,12 @@
 package com.ad.mq.db.impl;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -144,4 +147,26 @@ public class Oracle extends AbstractDataBase {
 		}
 		return seq;
 	}
+
+	@Override
+	public ResultSetMetaData query2ResultSetMetaData(String sql) throws SQLException, IOException {
+		Connection conn = this.getDataSource().getConnection();
+		return this.query2ResultSetMetaData(conn, sql);
+	}
+
+	@Override
+	public ResultSetMetaData query2ResultSetMetaData(Connection con, String sql) throws SQLException, IOException {
+		return this.query2ResultSetMetaData(con, sql, new Object[]{});
+	}
+
+	@Override
+	public ResultSetMetaData query2ResultSetMetaData(Connection con, String sql, Object[] params) throws SQLException, IOException {
+		PreparedStatement ps = con.prepareStatement("Select * from (" + sql + ") Where rownum <2");
+		
+		return AbstractDataBase.putValue2Statement(ps, params).executeQuery().getMetaData();
+	}
+
+
+	
+	
 }

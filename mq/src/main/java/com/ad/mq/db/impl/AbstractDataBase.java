@@ -15,6 +15,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.ResultSetHandler;
 import org.apache.commons.dbutils.handlers.ArrayHandler;
 import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.dbutils.handlers.BeanHandler;
@@ -202,14 +203,15 @@ public abstract class AbstractDataBase implements DBControl {
 	public abstract String pageTransfer(String sql, Page page, Object[] vs) throws SQLException;
 
 	@Override
-	public int update(Object o ,Map<String ,Object> request) throws Exception {
+	public int update(Object o, Map<String, Object> request) throws Exception {
 		List<Object> values = new ArrayList<Object>();
-		String sql = Utils.getUpdateSQL(o, values ,request);
+		String sql = Utils.getUpdateSQL(o, values, request);
 		if (log.isDebugEnabled()) {
 			log.debug(sql);
 		}
 		return this.update(sql, values.toArray());
 	}
+
 	@Override
 	public int update(Object o) throws Exception {
 		List<Object> values = new ArrayList<Object>();
@@ -219,6 +221,7 @@ public abstract class AbstractDataBase implements DBControl {
 		}
 		return this.update(sql, values.toArray());
 	}
+
 	@Override
 	public int delete(Object o) throws Exception {
 		List<Object> values = new ArrayList<Object>();
@@ -230,16 +233,15 @@ public abstract class AbstractDataBase implements DBControl {
 	}
 
 	@Override
-	public int update(Connection con, Object o ,Map<String ,Object> request) throws Exception {
+	public int update(Connection con, Object o, Map<String, Object> request) throws Exception {
 		List<Object> values = new ArrayList<Object>();
-		String sql = Utils.getUpdateSQL(o, values ,request);
+		String sql = Utils.getUpdateSQL(o, values, request);
 		if (log.isDebugEnabled()) {
 			log.debug(sql);
 		}
 		return this.update(con, sql, values.toArray());
 	}
-	
-	
+
 	@Override
 	public int update(Connection con, Object o) throws Exception {
 		List<Object> values = new ArrayList<Object>();
@@ -270,6 +272,11 @@ public abstract class AbstractDataBase implements DBControl {
 
 		PreparedStatement ps = null;
 		ps = con.prepareStatement(sql);
+
+		return putValue2Statement(ps, objs).executeUpdate();
+	}
+
+	public static PreparedStatement putValue2Statement(PreparedStatement ps, Object[] objs) throws SQLException, IOException {
 		int i = 1;
 		for (Object o : objs) {
 			if (o instanceof InputStream) {
@@ -295,7 +302,36 @@ public abstract class AbstractDataBase implements DBControl {
 			}
 			++i;
 		}
-		return ps.executeUpdate();
+		return ps;
 	}
 
+	@Override
+	public <T> T query(Connection conn, String sql, ResultSetHandler<T> rsh) {
+		return this.query(conn, sql, rsh);
+	}
+
+	@Override
+	public <T> T query(Connection conn, String sql, ResultSetHandler<T> rsh, Object... params) {
+		return this.query(conn, sql, rsh, params);
+	}
+
+	@Override
+	public <T> T query(String sql, Object[] params, ResultSetHandler<T> rsh) {
+		return this.query(sql, params, rsh);
+	}
+
+	@Override
+	public <T> T query(String sql, Object param, ResultSetHandler<T> rsh) {
+		return this.query(sql, param, rsh);
+	}
+
+	@Override
+	public <T> T query(String sql, ResultSetHandler<T> rsh) {
+		return this.query(sql, rsh);
+	}
+
+	@Override
+	public <T> T query(String sql, ResultSetHandler<T> rsh, Object... params) {
+		return this.query(sql, rsh, params);
+	}
 }

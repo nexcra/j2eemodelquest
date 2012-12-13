@@ -2,11 +2,14 @@ package com.ad.mq.db;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
+
+import org.apache.commons.dbutils.ResultSetHandler;
 
 /**
  * 操作数据库
@@ -28,6 +31,36 @@ public interface DBControl {
 	 * @return
 	 */
 	DataSource getDataSource();
+
+	/**
+	 * 查询出字段元数据
+	 * 
+	 * @param sql
+	 * @return
+	 * @throws SQLException 
+	 */
+	public ResultSetMetaData query2ResultSetMetaData(String sql) throws SQLException, IOException ;
+
+	/**
+	 * 查询出字段元数据
+	 * 
+	 * @param con
+	 * @param sql
+	 * @return
+	 * @throws SQLException 
+	 */
+	public ResultSetMetaData query2ResultSetMetaData(Connection con, String sql) throws SQLException, IOException ;
+
+	/**
+	 * 查询出字段元数据
+	 * 
+	 * @param con
+	 * @param sql
+	 * @param params
+	 * @return
+	 * @throws SQLException 
+	 */
+	public ResultSetMetaData query2ResultSetMetaData(Connection con, String sql, Object[] params) throws SQLException, IOException ;
 
 	/**
 	 * 把结果集中的第一行数据转成对象数组
@@ -383,6 +416,7 @@ public interface DBControl {
 	 * @throws Exception
 	 */
 	int update(Object o) throws Exception;
+
 	/**
 	 * 实体类的Update
 	 * 
@@ -390,7 +424,7 @@ public interface DBControl {
 	 * @return
 	 * @throws Exception
 	 */
-	int update(Object o ,Map<String ,Object> request) throws Exception;
+	int update(Object o, Map<String, Object> request) throws Exception;
 
 	/**
 	 * 实体类的Update
@@ -401,15 +435,17 @@ public interface DBControl {
 	 * @throws Exception
 	 */
 	int update(Connection con, Object o) throws Exception;
-		/**
-		 * 实体类的Update
-		 * 
-		 * @param con
-		 * @param o
-		 * @return
-		 * @throws Exception
-		 */
-		int update(Connection con, Object o ,Map<String ,Object> request) throws Exception;
+
+	/**
+	 * 实体类的Update
+	 * 
+	 * @param con
+	 * @param o
+	 * @return
+	 * @throws Exception
+	 */
+	int update(Connection con, Object o, Map<String, Object> request) throws Exception;
+
 	/**
 	 * 实体类的Insert
 	 * 
@@ -454,7 +490,7 @@ public interface DBControl {
 	 * @return
 	 * @throws SQLException
 	 */
-	int updateLOB(String sql, Object[] objs) throws SQLException,IOException;
+	int updateLOB(String sql, Object[] objs) throws SQLException, IOException;
 
 	/**
 	 * 更新大对象
@@ -465,7 +501,7 @@ public interface DBControl {
 	 * @return
 	 * @throws SQLException
 	 */
-	int updateLOB(Connection con, String sql, Object[] objs) throws SQLException,IOException;
+	int updateLOB(Connection con, String sql, Object[] objs) throws SQLException, IOException;
 
 	/**
 	 * 分页转换SQL
@@ -475,4 +511,58 @@ public interface DBControl {
 	 * @return
 	 */
 	String pageTransfer(String sql, Page page, Object[] vs) throws SQLException;
+
+	/**
+	 * the same of QueryRunner
+	 * @param conn
+	 * @param sql
+	 * @param rsh
+	 * @return
+	 */
+	<T> T query(Connection conn, String sql, ResultSetHandler<T> rsh);
+
+	/**
+	 * the same of QueryRunner
+	 * @param conn
+	 * @param sql
+	 * @param rsh
+	 * @param params
+	 * @return
+	 */
+	<T> T query(Connection conn, String sql, ResultSetHandler<T> rsh, Object... params);
+
+	/**
+	 * the same of QueryRunner
+	 * @param sql
+	 * @param params
+	 * @param rsh
+	 * @return
+	 */
+	<T> T query(String sql, Object[] params, ResultSetHandler<T> rsh);
+
+	/**
+	 * the same of QueryRunner
+	 * @param sql
+	 * @param param
+	 * @param rsh
+	 * @return
+	 */
+	<T> T query(String sql, Object param, ResultSetHandler<T> rsh);
+
+	/**
+	 * the same of QueryRunner
+	 * @param sql
+	 * @param rsh
+	 * @return
+	 */
+	<T> T query(String sql, ResultSetHandler<T> rsh);
+
+	/**
+	 * the same of QueryRunner
+	 * @param sql
+	 * @param rsh
+	 * @param params
+	 * @return
+	 */
+	<T> T query(String sql, ResultSetHandler<T> rsh, Object... params);
 }
