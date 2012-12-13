@@ -113,7 +113,7 @@ public abstract class AbstractBaseAction extends ActionSupport implements DataBa
 	 * @throws ClassNotFoundException
 	 */
 	protected Class<?> getEntityClass(Object dataid) throws SQLException, ClassNotFoundException {
-		DataObject dataObj = (DataObject) this.db.query2Bean(this.cfg, DataObject.class, new Object[] { dataid });
+		DataObject dataObj = (DataObject) this.db.query2Bean("select * from mq$object where id=?", DataObject.class, new Object[] { dataid });
 		if (null == dataObj && log.isDebugEnabled()) {
 			log.debug("dataId:" + this.$dataid + "不存在");
 			return null;
