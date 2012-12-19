@@ -186,3 +186,10 @@
 	font-size: 12px;
 	font-weight: normal;
 }
+
+/*
+报表专用
+*/
+._report_col,._report_row,._report_group {
+	background-color: #DFE8F6;
+}

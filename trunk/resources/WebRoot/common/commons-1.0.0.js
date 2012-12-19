@@ -22,17 +22,13 @@ Ext.onReady(function() {
 								params : config.params,
 								method : 'post',
 								success : function(response, options) {
-									wait.close();
-									if (Ext.isEmpty(response.responseText)) {
-										config.callback(null);
-										return;
-									}
 									var json = Ext.JSON.decode(response.responseText || '{}');
-									if (json && json.session) {
+									if (config.callback && json && json.session) {
 										config.callback(json);
 									} else {
 										Ext.create('App.login.LoginWindow').show();
 									}
+									wait.close();
 								},
 								failure : function(response, options) {
 									wait.close();
