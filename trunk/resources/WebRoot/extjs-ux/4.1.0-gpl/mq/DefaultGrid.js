@@ -498,7 +498,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 												params : params,
 												callback : function(dd) {
 													if (dd.data > 0)
-														me.store.remove(selection);
+														me.getStore().load();
 													else
 														Ext.Msg.alert('删除数据失败！');
 												}
