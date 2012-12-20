@@ -4,17 +4,11 @@ Ext.define('com.ad.report.ReportDesignContentPanel', {
 			border : 0,
 			reportCfg : null,
 			reportData : null,
-			tools : [{
-						type : 'save',
-						tooltip : '保存方案',
-						// hidden:true,
-						handler : function(event, toolEl, panel) {
-							// refresh logic
-						}
-					}],
+			reportTableId : null,
 			initComponent : function() {
 				var me = this;
 				me.autoScroll = true;
+
 				me.items = [{
 							xtype : 'panel',
 							title : '图表',
@@ -74,10 +68,11 @@ Ext.define('com.ad.report.ReportDesignContentPanel', {
 				var me = this;
 				var rows = datas.rows, cols = datas.cols, data = datas.datas;
 				var gcunt = cfg.groups.length, colspan = 0;
+				me.reportTableId = Ext.id();
 				me.reportCfg = cfg;
 				me.reportData = datas;
 
-				var tablehtml = '<table border=\'1\' style=\'text-align:center;\'><tbody>';
+				var tablehtml = '<table id=\'' + me.reportTableId + '\' border=\'1\' style=\'text-align:center;\'><tbody>';
 				tablehtml += '<tr><td colspan=\'' + cfg.rows.length + '\' rowspan=\'' + (cfg.cols.length + (gcunt > 1 ? 1 : 0)) + '\'>&nbsp;</td>';
 
 				if (cfg.cols.length > 0) {
@@ -266,21 +261,34 @@ Ext.define('com.ad.report.ReportDesignContentPanel', {
 			paintChart : function(panel) {
 				var me = this;
 				var chartFields = [];
-				var names = Ext.Array.union(me.reportCfg.cols, me.reportCfg.rows);
+				var names = [];
 				var numericFields = [], categoryFields = [];
-				for (var i = 0, len = names.length; i < len; i++) {
+				var dataTable = Ext.get(me.reportTableId);
+				if (Ext.isEmpty(dataTable)) {
+					return;
+				}
+				console.log(dataTable);
+				for (var i = 0, len = me.reportCfg.cols.length; i < len; i++) {
 					chartFields.push({
-								name : names[i]['labelname'],
+								name : 'col_' + me.reportCfg.cols[i]['labelname'],
 								type : 'string'
 							});
-					categoryFields.push(names[i]['labelname']);
+					categoryFields.push('col_' + me.reportCfg.cols[i]['labelname']);
+				}
+
+				for (var i = 0, len = me.reportCfg.rows.length; i < len; i++) {
+					chartFields.push({
+								name : 'row_' + me.reportCfg.rows[i]['labelname'],
+								type : 'string'
+							});
+					categoryFields.push('row_' + me.reportCfg.rows[i]['labelname']);
 				}
 				for (var i = 0, len = me.reportCfg.groups.length; i < len; i++) {
 					chartFields.push({
-								name : '__' +me.reportCfg.groups[i]['labelname'],
+								name : me.reportCfg.groups[i]['labelname'],
 								type : 'double'
 							});
-					numericFields.push('__' +me.reportCfg.groups[i]['labelname']);
+					numericFields.push(me.reportCfg.groups[i]['labelname']);
 				}
 				var chartstore = Ext.create('Ext.data.ArrayStore', {
 							autoDestroy : true,
@@ -304,11 +312,14 @@ Ext.define('com.ad.report.ReportDesignContentPanel', {
 										title : false,
 										grid : true,
 										label : {
-											renderer: Ext.util.Format.numberRenderer('0,0')
-//											renderer : function(v) {
-//												return String(v).replace(/(.)00000$/, '.$1M');
-//												renderer: Ext.util.Format.numberRenderer('0,0')
-//											}
+											renderer : Ext.util.Format.numberRenderer('0,0')
+											// renderer : function(v) {
+											// return
+											// String(v).replace(/(.)00000$/,
+											// '.$1M');
+											// renderer:
+											// Ext.util.Format.numberRenderer('0,0')
+											// }
 										}
 									}, {
 										type : 'Category',
@@ -334,10 +345,10 @@ Ext.define('com.ad.report.ReportDesignContentPanel', {
 												if (numericFields.length > 1) {
 													var total = 0;
 													for (var i = 0, len = numericFields.length; i < len; i++) {
-														title += ' ' + numericFields[i] + ':' + storeItem.get(numericFields[i]);
+														title += ' <br/>' + numericFields[i] + ':' + storeItem.get(numericFields[i]);
 														total += storeItem.get(numericFields[i]);
 													}
-													title += ' 合计：' + total;
+													title += ' <br/>合计：' + total;
 												} else {
 													title += storeItem.get(numericFields[0]);
 												}
@@ -349,12 +360,10 @@ Ext.define('com.ad.report.ReportDesignContentPanel', {
 						});
 				panel.removeAll();
 				panel.add(chart);
-//				console.log(chart);
-/**
-
-bug:
-	现生成图标的xField是写死的，应可选择，并根据其选择项对数据进行合计处理
-*/
+				// console.log(chart);
+				/**
+				 * 
+				 * bug: 现生成图标的xField是写死的，应可选择，并根据其选择项对数据进行合计处理
+				 */
 			}
-
 		});

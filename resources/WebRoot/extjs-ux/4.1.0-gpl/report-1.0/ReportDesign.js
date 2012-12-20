@@ -17,7 +17,6 @@ Ext.define('com.ad.report.ReportDesign', {
 							width : 250
 						});
 				var contentPanel = Ext.create('com.ad.report.ReportDesignContentPanel', {
-							title : '预览区域',
 							autoScroll : 1,
 							itemId : 'reportDesignContent',
 							region : 'center',

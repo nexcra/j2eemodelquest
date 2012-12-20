@@ -6,6 +6,26 @@ Ext.define('com.ad.report.ReportDesignLeftPanel', {
 			initComponent : function() {
 				var me = this;
 				me.autoScroll = true;
+
+				me.tools = [{
+							type : 'refresh',
+							tooltip : '刷新',
+							handler : function() {
+								me.up().getComponent('reportDesignContent').reportCfg = null;
+								reportSrcCombo.getStore().load();
+								me.items.each(function(item) {
+											item.getStore().removeAll();
+										});
+
+							}
+						}, {
+							type : 'save',
+							tooltip : '保存方案',
+							// hidden:true,
+							handler : function(event, toolEl, panel) {
+								me.openReportPlan();
+							}
+						}];
 				var reportSrcCombo = Ext.create('Ext.form.field.ComboBox', {
 							fieldLabel : '数据',
 							labelAlign : 'right',
@@ -45,20 +65,7 @@ Ext.define('com.ad.report.ReportDesignLeftPanel', {
 							}
 						});
 
-				me.tbar = [{
-							xtype : 'button',
-							iconCls : Ext.baseCSSPrefix + 'tbar-loading',
-							tooltip : '刷新',
-							scope : me,
-							itemId : 'refershBtn',
-							handler : function() {
-								reportSrcCombo.getStore().load();
-								this.items.each(function(item) {
-											item.getStore().removeAll();
-										});
-
-							}
-						}, reportSrcCombo];
+				me.tbar = [reportSrcCombo];
 
 				Ext.define('ReportSrcClmn', {
 							extend : 'Ext.data.Model',
@@ -300,13 +307,6 @@ Ext.define('com.ad.report.ReportDesignLeftPanel', {
 					return;
 				}
 				var me = this;
-				var _msg = Ext.create('Ext.form.field.Display', {
-							value : ':)',
-							style : {
-								color : 'red'
-							},
-							flex : 1
-						});
 				var valType = 'textfield';
 				var expreDatas = [{
 							"value" : "="
@@ -359,88 +359,44 @@ Ext.define('com.ad.report.ReportDesignLeftPanel', {
 								}];
 						break;
 				}
-
+				var form = Ext.create('com.ad.report.ReportSrcWhereForm', {
+							_expreDatas : expreDatas,
+							_labelname : record.get('labelname'),
+							_valType : valType
+						});
 				var win = Ext.create('Ext.window.Window', {
 							title : '请录入条件',
 							height : 150,
 							width : 320,
 							modal : 1,
 							resizable : 0,
-							// layout : 'fit',
-							items : [{
-										xtype : 'displayfield',
-										labelAlign : 'right',
-										labelWidth : 50,
-										fieldLabel : '名称',
-										value : record.get('labelname')
+							layout : 'fit',
+							items : form,
+							buttons : [{
+										xtype : 'button',
+										text : '确定',
+										handler : function() {
+											if (!form.getForm().isValid())
+												return;
+											var formRecord = form.getForm().getValues();
+											me.moveRecord = Ext.create('ReportSrcWhere', {
+														expre : formRecord['expre'],
+														value : formRecord['value'],
+														id : Ext.id(),
+														clmnname : record.get('clmnname'),
+														labelname : record.get('labelname'),
+														datatype : record.get('datatype'),
+														rmk : record.get('rmk')
+													});
+
+											me.mouseupHandler(view);
+											win.destroy();
+										}
 									}, {
-										xtype : 'combo',
-										labelAlign : 'right',
-										fieldLabel : '条件',
-										labelWidth : 50,
-										itemId : 'expre',
-										allowBlank : 0,
-										store : Ext.create('Ext.data.Store', {
-													fields : ['value'],
-													data : expreDatas
-												}),
-										queryMode : 'local',
-										editable : 0,
-										displayField : 'value',
-										valueField : 'value'
-									}, {
-										xtype : valType,
-										labelAlign : 'right',
-										labelWidth : 50,
-										fieldLabel : '内容',
-										itemId : 'value',
-										value : null,
-										width : 300
-									}],
-							dockedItems : [{
-										xtype : 'toolbar',
-										dock : 'bottom',
-										ui : 'footer',
-										// defaults : {
-										// minWidth : minButtonWidth
-										// },
-										items : [_msg, {
-													xtype : 'button',
-													text : '确定',
-													handler : function() {
-														var expreCmp = win.getComponent('expre');
-														var valueCmp = win.getComponent('value');
-
-														if (Ext.isEmpty(expreCmp.getValue())) {
-															_msg.setValue('请选择条件!');
-															expreCmp.focus();
-															return;
-														}
-														if (Ext.isEmpty(valueCmp.getValue()) && !(expreCmp.getValue() === '为空' || expreCmp.getValue() === '为空')) {
-															_msg.setValue('请录入内容!');
-															valueCmp.focus();
-															return;
-														}
-
-														me.moveRecord = Ext.create('ReportSrcWhere', {
-																	expre : expreCmp.getValue(),
-																	value : valueCmp.getValue(),
-																	id : Ext.id(),
-																	clmnname : record.get('clmnname'),
-																	labelname : record.get('labelname'),
-																	datatype : record.get('datatype'),
-																	rmk : record.get('rmk')
-																});
-
-														me.mouseupHandler(view);
-														win.destroy();
-													}
-												}, {
-													text : '取消',
-													handler : function() {
-														win.destroy();
-													}
-												}]
+										text : '取消',
+										handler : function() {
+											win.destroy();
+										}
 									}]
 						});
 				win.show();
@@ -506,5 +462,49 @@ Ext.define('com.ad.report.ReportDesignLeftPanel', {
 				// data
 				me.up().getComponent('reportDesignContent').repaint(cfg);
 
+			},
+			openReportPlan : function() {
+				var me = this;
+				var rpcfg = me.up().getComponent('reportDesignContent').reportCfg;
+				if (Ext.isEmpty(rpcfg)) {
+					return;
+				}
+				// refresh logic
+				var form = Ext.create('com.ad.report.ReportPlanForm');
+				var win = Ext.create('Ext.window.Window', {
+							title : '请录入名称',
+							height : 150,
+							width : 400,
+							modal : 1,
+							resizable : 0,
+							layout : 'fit',
+							items : form,
+							buttons : [{
+										text : '确定',
+										handler : function() {
+											if (!form.getForm().isValid())
+												return;
+											var values = form.getForm().getValues();
+											Ext.apply(values, {
+														$actionid : -6005,
+														srcid : rpcfg.dataid,
+														rptcfg : Ext.encode(rpcfg)
+													});
+											com.ad.ajax({
+														params : values,
+														callback : function(dd) {
+															win.destroy();
+														}
+													});
+
+										}
+									}, {
+										text : '取消',
+										handler : function() {
+											win.destroy();
+										}
+									}]
+						}).show();
 			}
+
 		});
