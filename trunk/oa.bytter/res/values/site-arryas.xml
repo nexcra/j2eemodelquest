@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>  
+<resources>  
+    <string-array name="plantes">  
+        <item>http://oa.bytter.com/c6</item>  
+        <item>http://210.75.22.120/c6</item>  
+    </string-array>  
+</resources>  
