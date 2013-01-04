@@ -11,7 +11,7 @@ import javax.persistence.SequenceGenerator;
 @Entity(name = "REPORT$SRC_CLMN")
 public class ReportSrcClmn implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@Id 
+	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ")
 	@SequenceGenerator(name = "SEQ", sequenceName = "SEQ_REPORT$SRC_CLMN_ID")
 	private Integer id;
@@ -19,6 +19,16 @@ public class ReportSrcClmn implements Serializable {
 	private String clmnname;
 	private String labelname;
 	private String datatype;
+
+	private String rmk;
+
+	public String getRmk() {
+		return rmk;
+	}
+
+	public void setRmk(String rmk) {
+		this.rmk = rmk;
+	}
 
 	public Integer getId() {
 		return id;

@@ -23,8 +23,9 @@ public class SaveReportSrcAction extends InsertAction {
 			ReportSrc object = (ReportSrc) this.getObject(ReportSrc.class);
 			CreateReportClmnService crcs = new CreateReportClmnService();
 			crcs.setDb(this.db);
+			data.setData(this.insert(object));
 			crcs.syncReportClmn(object);
-			data.setData(this.insert(this.$dataid));
+			
 			data.setMessage("ok");
 			con.commit();
 		} catch (Exception e) {
