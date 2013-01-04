@@ -3,7 +3,10 @@ package com.ad.report.model;
 import java.io.Serializable;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 @Entity(name = "REPORT$OBJ")
 public class ReportObj implements Serializable {
@@ -11,11 +14,23 @@ public class ReportObj implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SEQ")
+	@SequenceGenerator(name = "SEQ", sequenceName = "SEQ_MQ_PUBLIC")
 	private Integer id;
 	private String name;
 	private Integer srcid;
 	private String cfg;
 	private Integer usrid;
+
+	private Boolean ispublic;
+	
+	public Boolean getIspublic() {
+		return ispublic;
+	}
+
+	public void setIspublic(Boolean ispublic) {
+		this.ispublic = ispublic;
+	}
 
 	public Integer getId() {
 		return id;
