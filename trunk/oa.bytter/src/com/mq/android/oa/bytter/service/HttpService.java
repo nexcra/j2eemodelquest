@@ -40,9 +40,24 @@ public class HttpService {
 	private String loginUrl;
 	private String upworkUrl;
 	private String downworkUrl;
+	private String username;
+	private String passwd;
+	private String attid;
+	
+	
 
-	public HttpService() {
+	public String getAttid() {
+		return attid;
+	}
+
+	public void setAttid(String attid) {
+		this.attid = attid;
+	}
+
+	public HttpService(String username ,String passwd) {
 		this.client = this.getHttpClient();
+		this.username = username ;
+		this.passwd = passwd;
 	}
 
 	public HttpClient getClient() {
@@ -95,6 +110,7 @@ public class HttpService {
 	public void doDownwork() throws ClientProtocolException, IOException {
 
 		HttpResponse response = this.doPost(this.downworkUrl, this.getDownWorkData());
+//		System.out.println(EntityUtils.toString(response.getEntity()));
 		if (response.getStatusLine().getStatusCode() != 200) {
 			new IOException("请求[POST]" + this.downworkUrl + "发生错误!");
 		}
@@ -125,6 +141,8 @@ public class HttpService {
 			if (this.getBtnStatus(downworkUrlStr)) {
 				state |=2;
 			}
+			this.attid = this.getAttId(downworkUrlStr);
+			System.out.println("MMMMMMMMMMMMMMMMMMMMMMM=" +this.attid);
 		}
 		return state;
 	}
@@ -200,8 +218,8 @@ public class HttpService {
 		// PostMethod post = new
 		// PostMethod("/c6/Jhsoft.Web.login/PassWord.aspx");
 
-		paramPair.add(new BasicNameValuePair("Password2", "0"));
-		paramPair.add(new BasicNameValuePair("UserName", "yangmq"));
+		paramPair.add(new BasicNameValuePair("Password2", this.passwd));
+		paramPair.add(new BasicNameValuePair("UserName", this.username));
 
 		paramPair.add(new BasicNameValuePair("__EVENTARGUMENT", ""));
 		paramPair.add(new BasicNameValuePair("__EVENTTARGET", "LBEnter"));
@@ -221,7 +239,6 @@ public class HttpService {
 	public List<NameValuePair> getUpWorkData() {
 
 		List<NameValuePair> paramPair = new ArrayList<NameValuePair>();
-		paramPair.add(new BasicNameValuePair("Password2", "0"));
 		paramPair.add(new BasicNameValuePair("DDLClass", "11111-11111-11111-11111-11111"));
 		paramPair.add(new BasicNameValuePair("__EVENTARGUMENT", ""));
 		paramPair.add(new BasicNameValuePair("__EVENTTARGET", "btn_ok"));
@@ -233,7 +250,7 @@ public class HttpService {
 		paramPair.add(new BasicNameValuePair("hidXml", "<root><userCode>" + this.usercode + "</userCode><onTime>" + this.getUpworkTime()
 				+ "</onTime><LateResult><![CDATA[]]></LateResult><adjType>Normal</adjType><adjValue></adjValue><lawGuid>Ra3Z7-8Vc0b-K9IaC-9HBCf-SF2dR</lawGuid><classGuid>11111-11111-11111-11111-11111</classGuid><className>深圳-白班</className><classOnTime>8:31</classOnTime><classOffTime>17:59</classOffTime><putBeginTime>2010/3/1 0:00:00</putBeginTime><isLate>0</isLate></root>"));
 		paramPair.add(new BasicNameValuePair("hid_PutBeginTime", "2010/3/1 0:00:00"));
-		paramPair.add(new BasicNameValuePair("Normal", ""));
+		paramPair.add(new BasicNameValuePair("hid_adjType", "Normal"));
 		paramPair.add(new BasicNameValuePair("hid_adjValue", ""));
 		paramPair.add(new BasicNameValuePair("hid_classGuid", "11111-11111-11111-11111-11111"));
 		paramPair.add(new BasicNameValuePair("hid_className", "深圳-白班"));
@@ -257,8 +274,8 @@ public class HttpService {
 				.add(new BasicNameValuePair(
 						"__VIEWSTATE",
 						"/wEPDwULLTEzNzExNTkwNDUPFgIeCkFET2ZmQ2xhc3My/RQAAQAAAP////8BAAAAAAAAAAwCAAAATlN5c3RlbS5EYXRhLCBWZXJzaW9uPTIuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OQUBAAAAFVN5c3RlbS5EYXRhLkRhdGFUYWJsZQMAAAAZRGF0YVRhYmxlLlJlbW90aW5nVmVyc2lvbglYbWxTY2hlbWELWG1sRGlmZkdyYW0DAQEOU3lzdGVtLlZlcnNpb24CAAAACQMAAAAGBAAAAOoMPD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTE2Ij8+DQo8eHM6c2NoZW1hIHhtbG5zPSIiIHhtbG5zOnhzPSJodHRwOi8vd3d3LnczLm9yZy8yMDAxL1hNTFNjaGVtYSIgeG1sbnM6bXNkYXRhPSJ1cm46c2NoZW1hcy1taWNyb3NvZnQtY29tOnhtbC1tc2RhdGEiPg0KICA8eHM6ZWxlbWVudCBuYW1lPSJUYWJsZTEiPg0KICAgIDx4czpjb21wbGV4VHlwZT4NCiAgICAgIDx4czpzZXF1ZW5jZT4NCiAgICAgICAgPHhzOmVsZW1lbnQgbmFtZT0iYXR0X1R5cGUiIHR5cGU9InhzOnN0cmluZyIgbXNkYXRhOnRhcmdldE5hbWVzcGFjZT0iIiBtaW5PY2N1cnM9IjAiIC8+DQogICAgICAgIDx4czplbGVtZW50IG5hbWU9ImF0dF9kYXRlIiB0eXBlPSJ4czpkYXRlVGltZSIgbXNkYXRhOnRhcmdldE5hbWVzcGFjZT0iIiBtaW5PY2N1cnM9IjAiIC8+DQogICAgICAgIDx4czplbGVtZW50IG5hbWU9ImF0dF9JRCIgdHlwZT0ieHM6aW50IiBtc2RhdGE6dGFyZ2V0TmFtZXNwYWNlPSIiIG1pbk9jY3Vycz0iMCIgLz4NCiAgICAgICAgPHhzOmVsZW1lbnQgbmFtZT0iY2xhc3NfR3VpZCIgdHlwZT0ieHM6c3RyaW5nIiBtc2RhdGE6dGFyZ2V0TmFtZXNwYWNlPSIiIG1pbk9jY3Vycz0iMCIgLz4NCiAgICAgICAgPHhzOmVsZW1lbnQgbmFtZT0iY2xhc3NfbmFtZSIgdHlwZT0ieHM6c3RyaW5nIiBtc2RhdGE6dGFyZ2V0TmFtZXNwYWNlPSIiIG1pbk9jY3Vycz0iMCIgLz4NCiAgICAgICAgPHhzOmVsZW1lbnQgbmFtZT0iY2xhc3NfYmVnaW5UaW1lIiB0eXBlPSJ4czpkYXRlVGltZSIgbXNkYXRhOnRhcmdldE5hbWVzcGFjZT0iIiBtaW5PY2N1cnM9IjAiIC8+DQogICAgICAgIDx4czplbGVtZW50IG5hbWU9ImNsYXNzX2VuZFRpbWUiIHR5cGU9InhzOmRhdGVUaW1lIiBtc2RhdGE6dGFyZ2V0TmFtZXNwYWNlPSIiIG1pbk9jY3Vycz0iMCIgLz4NCiAgICAgICAgPHhzOmVsZW1lbnQgbmFtZT0iY2xhc3NfZmxhZyIgdHlwZT0ieHM6aW50IiBtc2RhdGE6dGFyZ2V0TmFtZXNwYWNlPSIiIG1pbk9jY3Vycz0iMCIgLz4NCiAgICAgICAgPHhzOmVsZW1lbnQgbmFtZT0iYXR0X29mZnRpbWUiIHR5cGU9InhzOmRhdGVUaW1lIiBtc2RhdGE6dGFyZ2V0TmFtZXNwYWNlPSIiIG1pbk9jY3Vycz0iMCIgLz4NCiAgICAgICAgPHhzOmVsZW1lbnQgbmFtZT0iYXR0X29udGltZSIgdHlwZT0ieHM6ZGF0ZVRpbWUiIG1zZGF0YTp0YXJnZXROYW1lc3BhY2U9IiIgbWluT2NjdXJzPSIwIiAvPg0KICAgICAgICA8eHM6ZWxlbWVudCBuYW1lPSJjbGFzc19zdHJldGNodGltZSIgdHlwZT0ieHM6aW50IiBtc2RhdGE6dGFyZ2V0TmFtZXNwYWNlPSIiIG1pbk9jY3Vycz0iMCIgLz4NCiAgICAgIDwveHM6c2VxdWVuY2U+DQogICAgPC94czpjb21wbGV4VHlwZT4NCiAgPC94czplbGVtZW50Pg0KICA8eHM6ZWxlbWVudCBuYW1lPSJ0bXBEYXRhU2V0IiBtc2RhdGE6SXNEYXRhU2V0PSJ0cnVlIiBtc2RhdGE6TWFpbkRhdGFUYWJsZT0iVGFibGUxIiBtc2RhdGE6VXNlQ3VycmVudExvY2FsZT0idHJ1ZSI+DQogICAgPHhzOmNvbXBsZXhUeXBlPg0KICAgICAgPHhzOmNob2ljZSBtaW5PY2N1cnM9IjAiIG1heE9jY3Vycz0idW5ib3VuZGVkIiAvPg0KICAgIDwveHM6Y29tcGxleFR5cGU+DQogIDwveHM6ZWxlbWVudD4NCjwveHM6c2NoZW1hPgYFAAAA5gU8ZGlmZmdyOmRpZmZncmFtIHhtbG5zOm1zZGF0YT0idXJuOnNjaGVtYXMtbWljcm9zb2Z0LWNvbTp4bWwtbXNkYXRhIiB4bWxuczpkaWZmZ3I9InVybjpzY2hlbWFzLW1pY3Jvc29mdC1jb206eG1sLWRpZmZncmFtLXYxIj4NCiAgPHRtcERhdGFTZXQ+DQogICAgPFRhYmxlMSBkaWZmZ3I6aWQ9IlRhYmxlMTEiIG1zZGF0YTpyb3dPcmRlcj0iMCI+DQogICAgICA8YXR0X1R5cGU+MDwvYXR0X1R5cGU+DQogICAgICA8YXR0X2RhdGU+MjAxMi0xMi0yNlQwMDowMDowMCswODowMDwvYXR0X2RhdGU+DQogICAgICA8YXR0X0lEPjU4MjkzPC9hdHRfSUQ+DQogICAgICA8Y2xhc3NfR3VpZD4xMTExMS0xMTExMS0xMTExMS0xMTExMS0xMTExMTwvY2xhc3NfR3VpZD4NCiAgICAgIDxjbGFzc19uYW1lPua3seWcsy3nmb3nj608L2NsYXNzX25hbWU+DQogICAgICA8Y2xhc3NfYmVnaW5UaW1lPjE5MDAtMDEtMDFUMDg6MzE6MDArMDg6MDA8L2NsYXNzX2JlZ2luVGltZT4NCiAgICAgIDxjbGFzc19lbmRUaW1lPjE5MDAtMDEtMDFUMTc6NTk6MDArMDg6MDA8L2NsYXNzX2VuZFRpbWU+DQogICAgICA8Y2xhc3NfZmxhZz4wPC9jbGFzc19mbGFnPg0KICAgICAgPGF0dF9vbnRpbWU+MjAxMi0xMi0yNlQwODozMjowMCswODowMDwvYXR0X29udGltZT4NCiAgICAgIDxjbGFzc19zdHJldGNodGltZT4yPC9jbGFzc19zdHJldGNodGltZT4NCiAgICA8L1RhYmxlMT4NCiAgPC90bXBEYXRhU2V0Pg0KPC9kaWZmZ3I6ZGlmZmdyYW0+BAMAAAAOU3lzdGVtLlZlcnNpb24EAAAABl9NYWpvcgZfTWlub3IGX0J1aWxkCV9SZXZpc2lvbgAAAAAICAgIAgAAAAAAAAD//////////wsWAmYPZBYKZg8QDxYGHg1EYXRhVGV4dEZpZWxkBQpjbGFzc19uYW1lHg5EYXRhVmFsdWVGaWVsZAUKY2xhc3NfZ3VpZB4LXyFEYXRhQm91bmRnZBAVAQ3mt7HlnLMt55m954+tFQEdMTExMTEtMTExMTEtMTExMTEtMTExMTEtMTExMTEUKwMBZxYBZmQCAQ8PFgIeBFRleHQFDDg6MzEgLSAxNzo1OWRkAgIPDxYCHwQFBTE5OjU4ZGQCAw8WAh4Fc3R5bGUFDGRpc3BsYXk6bm9uZWQCBg8WAh4IZGlzYWJsZWRkZGQ="));
-		paramPair.add(new BasicNameValuePair("hidXml", "<root><userCode>" + this.usercode + "</userCode><onTime>" + this.getDownworkTime() + "</onTime><LateResult><![CDATA[]]></LateResult><isLeave>0</isLeave><attID>58293</attID></root>"));
-		paramPair.add(new BasicNameValuePair("hid_attID", "58293"));
+		paramPair.add(new BasicNameValuePair("hidXml", "<root><userCode>" + this.usercode + "</userCode><onTime>" + this.getDownworkTime() + "</onTime><LateResult><![CDATA[]]></LateResult><isLeave>0</isLeave><attID>" +  this.attid+"</attID></root>"));
+		paramPair.add(new BasicNameValuePair("hid_attID", this.attid));
 		paramPair.add(new BasicNameValuePair("hid_isLeaveEarly", "0"));
 		paramPair.add(new BasicNameValuePair("txt_LateResult", ""));
 
@@ -284,6 +301,18 @@ public class HttpService {
 		return false;
 	}
 
+	public String getAttId(String str){
+		Pattern pattern1 = Pattern.compile("<input([^>]*)name=\"hid_attID\"([^>]*)>"); //
+		Matcher matcher1 = pattern1.matcher(str);
+		if (matcher1.find()) {
+			String html =  matcher1.group(0);
+			html=(html.split("value=\"")[1]);
+			return (html.substring(0, html.indexOf("\"")));
+		}
+		return null;
+	}
+	
+	
 	public String getUpworkTime() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String time = sdf.format(new Date(System.currentTimeMillis()));

@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
 			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects().detectLeakedClosableObjects().penaltyLog().penaltyDeath().build());
 		}
-		service = new HttpService();
+		
 		handler = new ServiceHandler(this);
 		btnLogin = (Button) this.findViewById(R.id.loginBtn);
 		btnUpwork = (Button) this.findViewById(R.id.upworkBtn);
@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
 					Toast.makeText(getApplicationContext(), R.string.msg_password_isnull, Toast.LENGTH_SHORT).show();
 					return;
 				}
-
+				service = new HttpService(textUsername.getText().toString() ,textPassword.getText().toString());
 				service.setLoginUrl(site + "/Jhsoft.Web.login/PassWord.aspx");
 				service.setUpworkUrl(site + "/JHSoft.web.HRMAttendance/attendance_on.aspx");
 				service.setDownworkUrl(site + "/JHSoft.web.HRMAttendance/attendance_off.aspx");
