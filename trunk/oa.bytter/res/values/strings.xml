@@ -5,9 +5,13 @@
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">OA.bytter</string>
     <string name="btn_upwork">签    到</string>
+    
+    <string name="btn_upworking">正在签到&#8230;</string>
     <string name="btn_downwork">签    退</string>
+    <string name="btn_downworking">正在签退&#8230;</string>
     <string name="btn_login">登    录</string>
     <string name="btn_login_again">重新登录</string>
+    <string name="btn_logining">正在登录&#8230;</string>
     <string name="text_username">用户名称</string>
     <string name="text_username_defalut">yangmq</string>
     <string name="text_password">用户密码</string>
