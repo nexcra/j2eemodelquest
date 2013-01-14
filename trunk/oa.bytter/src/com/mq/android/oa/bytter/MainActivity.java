@@ -37,6 +37,7 @@ public class MainActivity extends Activity {
 
 	private ServiceHandler handler;
 	private ArrayAdapter<CharSequence> adapter;
+	private ServiceThread action;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class MainActivity extends Activity {
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyLog().build());
 			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects().detectLeakedClosableObjects().penaltyLog().penaltyDeath().build());
 		}
-		
+
 		handler = new ServiceHandler(this);
 		btnLogin = (Button) this.findViewById(R.id.loginBtn);
 		btnUpwork = (Button) this.findViewById(R.id.upworkBtn);
@@ -55,7 +56,7 @@ public class MainActivity extends Activity {
 		textUsername = (EditText) this.findViewById(R.id.usernameText);
 		textPassword = (EditText) this.findViewById(R.id.passwordText);
 		spinnerSite = (Spinner) this.findViewById(R.id.siteSpinner);
-
+		action = new ServiceThread();
 		// 将可选内容与ArrayAdapter连接起来
 		adapter = ArrayAdapter.createFromResource(this, R.array.plantes, android.R.layout.simple_spinner_item);
 		// 设置下拉列表的风格
@@ -85,12 +86,17 @@ public class MainActivity extends Activity {
 					Toast.makeText(getApplicationContext(), R.string.msg_password_isnull, Toast.LENGTH_SHORT).show();
 					return;
 				}
-				service = new HttpService(textUsername.getText().toString() ,textPassword.getText().toString());
+				service = new HttpService(textUsername.getText().toString(), textPassword.getText().toString());
 				service.setLoginUrl(site + "/Jhsoft.Web.login/PassWord.aspx");
 				service.setUpworkUrl(site + "/JHSoft.web.HRMAttendance/attendance_on.aspx");
 				service.setDownworkUrl(site + "/JHSoft.web.HRMAttendance/attendance_off.aspx");
 				progressBar.setVisibility(View.VISIBLE);
-				new Thread(new ServiceThread("login")).start();
+				btnLogin.setEnabled(false);
+				btnLogin.setText(R.string.btn_logining);
+				action.setMethod("login");
+				handler.post(action);
+				System.out.println("login clicked!");
+//				new Thread(new ServiceThread("login")).start();
 
 			}
 		});
@@ -99,16 +105,22 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				progressBar.setVisibility(View.VISIBLE);
-
-				new Thread(new ServiceThread("upwork")).start();
+				btnUpwork.setEnabled(false);
+				btnUpwork.setText(R.string.btn_upworking);
+				action.setMethod("upwork");
+				handler.post(action);
+//				new Thread(new ServiceThread("upwork")).start();
 			}
 		});
 		btnDownwork.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
 				progressBar.setVisibility(View.VISIBLE);
-
-				new Thread(new ServiceThread("downwork")).start();
+				btnDownwork.setEnabled(false);
+				btnDownwork.setText(R.string.btn_downworking);
+				action.setMethod("downwork");
+				handler.post(action);
+//				new Thread(new ServiceThread("downwork")).start();
 			}
 		});
 	}
@@ -148,8 +160,8 @@ public class MainActivity extends Activity {
 		public void handleMessage(Message msg) {
 			MainActivity page = this.activity.get();
 			page.progressBar.setVisibility(View.GONE);
-			if (msg.arg2 < 0) {
-				Toast.makeText(page.getApplicationContext(), R.string.msg_err, Toast.LENGTH_SHORT).show();
+			if (msg.arg2 < 0 && null != msg.obj) {
+				Toast.makeText(page.getApplicationContext(), ((Exception) msg.obj).getMessage(), Toast.LENGTH_SHORT).show();
 			} else {
 				switch (msg.what) {
 				case 1:
@@ -160,12 +172,15 @@ public class MainActivity extends Activity {
 						page.btnDownwork.setEnabled(true);
 					}
 					page.btnLogin.setText(R.string.btn_login_again);
+					page.btnLogin.setEnabled(true);
 					break;
 				case 2:
 					page.btnUpwork.setEnabled(false);
+					page.btnUpwork.setText(R.string.btn_upwork);
 					break;
 				case 3:
 					page.btnDownwork.setEnabled(false);
+					page.btnDownwork.setText(R.string.btn_downwork);
 					break;
 				}
 			}
@@ -176,6 +191,17 @@ public class MainActivity extends Activity {
 	class ServiceThread implements Runnable {
 		private String method;
 
+		public String getMethod() {
+			return method;
+		}
+
+		public void setMethod(String method) {
+			this.method = method;
+		}
+
+		ServiceThread() {
+		}
+
 		ServiceThread(String method) {
 			this.method = method;
 		}
@@ -184,6 +210,7 @@ public class MainActivity extends Activity {
 		public void run() {
 			Message msg = Message.obtain();
 			msg.arg2 = 1;
+
 			if ("login".equals(this.method)) {
 
 				try {
@@ -191,9 +218,11 @@ public class MainActivity extends Activity {
 					msg.arg2 = MainActivity.this.service.doLogin();
 				} catch (ClientProtocolException e) {
 					msg.arg2 = -1;
+					msg.obj = e;
 					e.printStackTrace();
 				} catch (IOException e) {
 					msg.arg2 = -1;
+					msg.obj = e;
 					e.printStackTrace();
 				}
 
@@ -203,9 +232,11 @@ public class MainActivity extends Activity {
 					MainActivity.this.service.doUpwork();
 				} catch (ClientProtocolException e) {
 					msg.arg2 = -1;
+					msg.obj = e;
 					e.printStackTrace();
 				} catch (IOException e) {
 					msg.arg2 = -1;
+					msg.obj = e;
 					e.printStackTrace();
 				}
 			} else if ("downwork".equals(this.method)) {
@@ -214,9 +245,11 @@ public class MainActivity extends Activity {
 					MainActivity.this.service.doDownwork();
 				} catch (ClientProtocolException e) {
 					msg.arg2 = -1;
+					msg.obj = e;
 					e.printStackTrace();
 				} catch (IOException e) {
 					msg.arg2 = -1;
+					msg.obj = e;
 					e.printStackTrace();
 				}
 			}
