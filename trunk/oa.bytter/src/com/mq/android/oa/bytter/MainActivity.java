@@ -95,7 +95,7 @@ public class MainActivity extends Activity {
 				btnLogin.setText(R.string.btn_logining);
 				action.setMethod("login");
 				handler.post(action);
-				System.out.println("login clicked!");
+//				System.out.println("login clicked!");
 //				new Thread(new ServiceThread("login")).start();
 
 			}
