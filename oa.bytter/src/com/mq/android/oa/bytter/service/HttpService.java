@@ -142,7 +142,6 @@ public class HttpService {
 				state |=2;
 			}
 			this.attid = this.getAttId(downworkUrlStr);
-			System.out.println("MMMMMMMMMMMMMMMMMMMMMMM=" +this.attid);
 		}
 		return state;
 	}
