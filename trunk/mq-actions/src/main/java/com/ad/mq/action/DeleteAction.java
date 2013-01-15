@@ -53,12 +53,21 @@ public class DeleteAction extends ActionSupport implements DataBaseAware, Reques
 			log.debug("dataId:" + this.$dataid + "没有指定实体类名！");
 			return;
 		}
-		Class<?> clazz = Class.forName(dataObj.getBeanname());
-		Object object = Utils.map2ObjectByPK(clazz, this.request);
-
-		Integer cunt = this.db.delete(object);
+		
 		OutData outData = new OutData();
-		outData.setData(cunt);
+		
+		try{
+			Class<?> clazz = Class.forName(dataObj.getBeanname());
+			Object object = Utils.map2ObjectByPK(clazz, this.request);
+
+			Integer cunt = this.db.delete(object);
+			
+			outData.setData(cunt);
+		}catch(Exception e){
+			outData.setData(-1);
+			outData.setMessage(e.getMessage());
+		}
+		
 		this.out = outData;
 	}
 
