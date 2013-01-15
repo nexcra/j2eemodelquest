@@ -13,6 +13,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.StrictMode;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +21,7 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
+//import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -29,7 +30,7 @@ public class MainActivity extends Activity {
 	private Button btnLogin;
 	private Button btnUpwork;
 	private Button btnDownwork;
-	private ProgressBar progressBar;
+//	private ProgressBar progressBar;
 	private EditText textUsername;
 	private EditText textPassword;
 	private Spinner spinnerSite;
@@ -38,7 +39,11 @@ public class MainActivity extends Activity {
 	private ServiceHandler handler;
 	private ArrayAdapter<CharSequence> adapter;
 	private ServiceThread action;
+//	private Boolean upstate = false;
+//	private Boolean downstate = false;
 
+	private ProgressDialog dialog = null;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,11 +53,28 @@ public class MainActivity extends Activity {
 			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects().detectLeakedClosableObjects().penaltyLog().penaltyDeath().build());
 		}
 
+		
+		{
+			dialog = new ProgressDialog(this);
+			  // 设置进度条风格，风格为圆形，旋转的
+			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			 // 设置ProgressDialog 标题
+			dialog.setTitle("提示");
+			// 设置ProgressDialog 提示信息
+			dialog.setMessage("正在处理中...");
+			// 设置ProgressDialog 标题图标
+//			dialog.setIcon(R.drawable.img1);
+			// 设置ProgressDialog 的进度条是否不明确
+			dialog.setIndeterminate(false);
+			// 设置ProgressDialog 是否可以按退回按键取消
+			dialog.setCancelable(true);
+
+		}
 		handler = new ServiceHandler(this);
 		btnLogin = (Button) this.findViewById(R.id.loginBtn);
 		btnUpwork = (Button) this.findViewById(R.id.upworkBtn);
 		btnDownwork = (Button) this.findViewById(R.id.downworkBtn);
-		progressBar = (ProgressBar) this.findViewById(R.id.progressBar);
+//		progressBar = (ProgressBar) this.findViewById(R.id.progressBar);
 		textUsername = (EditText) this.findViewById(R.id.usernameText);
 		textPassword = (EditText) this.findViewById(R.id.passwordText);
 		spinnerSite = (Spinner) this.findViewById(R.id.siteSpinner);
@@ -90,11 +112,17 @@ public class MainActivity extends Activity {
 				service.setLoginUrl(site + "/Jhsoft.Web.login/PassWord.aspx");
 				service.setUpworkUrl(site + "/JHSoft.web.HRMAttendance/attendance_on.aspx");
 				service.setDownworkUrl(site + "/JHSoft.web.HRMAttendance/attendance_off.aspx");
-				progressBar.setVisibility(View.VISIBLE);
-				btnLogin.setEnabled(false);
-				btnLogin.setText(R.string.btn_logining);
+//				progressBar.setVisibility(View.VISIBLE);
+				
+//				btnUpwork.setEnabled(false);
+//				btnDownwork.setEnabled(false);
+//				
+//				
+//				btnLogin.setEnabled(false);
+//				btnLogin.setText(R.string.btn_logining);
 				action.setMethod("login");
 				handler.post(action);
+				dialog.show();
 //				System.out.println("login clicked!");
 //				new Thread(new ServiceThread("login")).start();
 
@@ -104,22 +132,24 @@ public class MainActivity extends Activity {
 		btnUpwork.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				progressBar.setVisibility(View.VISIBLE);
-				btnUpwork.setEnabled(false);
-				btnUpwork.setText(R.string.btn_upworking);
+//				progressBar.setVisibility(View.VISIBLE);
+//				btnUpwork.setEnabled(false);
+//				btnUpwork.setText(R.string.btn_upworking);
 				action.setMethod("upwork");
 				handler.post(action);
+				dialog.show();
 //				new Thread(new ServiceThread("upwork")).start();
 			}
 		});
 		btnDownwork.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				progressBar.setVisibility(View.VISIBLE);
-				btnDownwork.setEnabled(false);
-				btnDownwork.setText(R.string.btn_downworking);
+//				progressBar.setVisibility(View.VISIBLE);
+//				btnDownwork.setEnabled(false);
+//				btnDownwork.setText(R.string.btn_downworking);
 				action.setMethod("downwork");
 				handler.post(action);
+				dialog.show();
 //				new Thread(new ServiceThread("downwork")).start();
 			}
 		});
@@ -159,32 +189,40 @@ public class MainActivity extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			MainActivity page = this.activity.get();
-			page.progressBar.setVisibility(View.GONE);
+//			page.progressBar.setVisibility(View.GONE);
+			page.dialog.cancel();
 			if (msg.arg2 < 0 && null != msg.obj) {
 				Toast.makeText(page.getApplicationContext(), ((Exception) msg.obj).getMessage(), Toast.LENGTH_SHORT).show();
+				
 			} else {
 				switch (msg.what) {
 				case 1:
+//					page.upstate = false;
 					if ((msg.arg2 & 1) == 1) {
+//						page.upstate = true;
 						page.btnUpwork.setEnabled(true);
 					}
+//					page.downstate = false;
 					if ((msg.arg2 & 2) == 2) {
+//						page.downstate = true;
 						page.btnDownwork.setEnabled(true);
 					}
 					page.btnLogin.setText(R.string.btn_login_again);
 					page.btnLogin.setEnabled(true);
 					break;
 				case 2:
+//					page.upstate = false;
 					page.btnUpwork.setEnabled(false);
-					page.btnUpwork.setText(R.string.btn_upwork);
+//					page.btnUpwork.setText(R.string.btn_upwork);
 					break;
 				case 3:
+//					page.downstate = false;
 					page.btnDownwork.setEnabled(false);
-					page.btnDownwork.setText(R.string.btn_downwork);
+//					page.btnDownwork.setText(R.string.btn_downwork);
 					break;
 				}
 			}
-
+			
 		}
 	}
 
@@ -219,11 +257,11 @@ public class MainActivity extends Activity {
 				} catch (ClientProtocolException e) {
 					msg.arg2 = -1;
 					msg.obj = e;
-					e.printStackTrace();
+//					e.printStackTrace();
 				} catch (IOException e) {
 					msg.arg2 = -1;
 					msg.obj = e;
-					e.printStackTrace();
+//					e.printStackTrace();
 				}
 
 			} else if ("upwork".equals(this.method)) {
@@ -233,7 +271,7 @@ public class MainActivity extends Activity {
 				} catch (ClientProtocolException e) {
 					msg.arg2 = -1;
 					msg.obj = e;
-					e.printStackTrace();
+//					e.printStackTrace();
 				} catch (IOException e) {
 					msg.arg2 = -1;
 					msg.obj = e;
@@ -250,7 +288,7 @@ public class MainActivity extends Activity {
 				} catch (IOException e) {
 					msg.arg2 = -1;
 					msg.obj = e;
-					e.printStackTrace();
+//					e.printStackTrace();
 				}
 			}
 			MainActivity.this.handler.sendMessage(msg);
