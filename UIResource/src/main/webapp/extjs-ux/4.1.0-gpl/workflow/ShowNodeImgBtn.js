@@ -1,7 +1,7 @@
 // author:YMQ
 // version: 1.0.0
 // create:2012-6-21
-// 显示流程较长
+// 查看流程图
 Ext.define('com.ad.workflow.ShowNodeImgBtn', {
 			extend : 'Ext.Button',
 			config : {
@@ -24,11 +24,15 @@ Ext.define('com.ad.workflow.ShowNodeImgBtn', {
 					return;
 				Ext.create('Ext.window.Window', {
 							title : '流程图[' + selection.get('id') + ']',
+							autoScroll : true,
 							width : 600,
 							height : 400,
 							layout : 'fit',
-							html : '<div style="text-align:center;"><img src=\'images/' + selection.get('wfid') + '.png\' alt=\'流程图\'/></div>'
-
+							items : Ext.create('Ext.Img', {
+										src : 'images/' + selection.get('wfid') + '.png',
+										autoScroll : true,
+										autoEl : 'div'
+									})
 						}).show();
 			}
 		});

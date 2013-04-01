@@ -6,6 +6,7 @@ Ext.define('com.ad.workflow.WorkFlowImg', {
 			extend : 'Ext.panel.Panel',
 			layout : 'fit',
 			border : 0,
+			autoScroll : 1,
 			config : {
 				_document : null,
 				_view : null
@@ -17,7 +18,11 @@ Ext.define('com.ad.workflow.WorkFlowImg', {
 			},
 			initComponent : function() {
 				var me = this;
-				me.html = '<img src=\'images/' + me._document.wfid + '.png\' alt=\'流程图\'/>';
+
+				me.items = Ext.create('Ext.Img', {
+							src : 'images/' + me._document.wfid + '.png',
+							autoEl : 'div'
+						});
 				me.callParent();
 			}
 		});
