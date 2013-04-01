@@ -39,7 +39,7 @@ Ext.define('com.ad.workflow.SubmitBtn', {
 										me._grid.getStore().load();
 									}
 								} else {
-									Ext.Msg.alert('警告', input.message);
+									window.alert(input.message);
 								}
 							}
 						}).show();
