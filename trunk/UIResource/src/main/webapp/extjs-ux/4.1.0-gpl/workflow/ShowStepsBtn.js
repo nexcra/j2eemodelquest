@@ -24,8 +24,8 @@ Ext.define('com.ad.workflow.ShowStepsBtn', {
 					return;
 				Ext.create('Ext.window.Window', {
 							title : '流程[' + selection.get('id') + ']',
-							width : 800,
-							height : 600,
+							width : 600,
+							height : 400,
 							layout : 'fit',
 							items : Ext.create('com.ad.mq.DefaultGridPanel', {
 										_dataid : 203,
@@ -37,3 +37,6 @@ Ext.define('com.ad.workflow.ShowStepsBtn', {
 						}).show();
 			}
 		});
+		
+		
+
