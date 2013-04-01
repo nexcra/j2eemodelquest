@@ -3,6 +3,7 @@ package com.ad.workflow;
 import java.sql.Connection;
 
 import com.ad.mq.model.IUser;
+import com.ad.workflow.model.WorkFlowDocumentStep;
 import com.ad.workflow.model.WorkFlowNode;
 import com.ad.workflow.model.view.VWorkFlowDocument;
 
@@ -36,7 +37,7 @@ public interface INodeHandler {
 	 * @param usr
 	 * @throws Exception
 	 */
-	void enter(Integer  fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception;
+	WorkFlowDocumentStep enter(Integer  fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception;
 
 	/**
 	 * 提交之前
