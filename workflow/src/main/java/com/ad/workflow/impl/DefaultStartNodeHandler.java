@@ -19,19 +19,20 @@ import com.ad.workflow.model.view.VWorkFlowDocument;
 public class DefaultStartNodeHandler extends NodeHandlerAdapter {
 	private Logger log = Logger.getLogger(DefaultStartNodeHandler.class);
 	@Override
-	public void enter(Integer fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
+	public WorkFlowDocumentStep enter(Integer fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("enter invoke!");
 		}
 		//this.db.update(conn, "update WORKFLOW_DOCUMENT set usrid = ? where id =?", new Object[] { usr.getUserId(), node.getId(), document.getId() });
-		WorkFlowDocumentStep step = new WorkFlowDocumentStep();
-		step.setDid(document.getId());
-		step.setEnterdate(new Timestamp(System.currentTimeMillis()));
-		step.setNid(node.getId());
-		step.setUsrid(document.getUsrid());
-		step.setStatus(IWorkFlow.STEP_WORKING);
-		step.setFromnid(fromnode);
-		step.setFromsid(sid);
-		this.db.insert(conn, step);
+//		WorkFlowDocumentStep step = new WorkFlowDocumentStep();
+//		step.setDid(document.getId());
+//		step.setEnterdate(new Timestamp(System.currentTimeMillis()));
+//		step.setNid(node.getId());
+//		step.setUsrid(document.getUsrid());
+//		step.setStatus(IWorkFlow.STEP_WORKING);
+//		step.setFromnid(fromnode);
+//		step.setFromsid(sid);
+//		this.db.insert(conn, step);
+		return super.enter(fromnode, node, document, conn, sid, usr);
 	}
 }

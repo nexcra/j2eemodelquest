@@ -2,6 +2,7 @@ package com.ad.workflow.impl;
 
 import java.sql.Connection;
 import java.sql.Timestamp;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -10,6 +11,7 @@ import com.ad.mq.interceptor.DataBaseAware;
 import com.ad.mq.model.IUser;
 import com.ad.workflow.INodeHandler;
 import com.ad.workflow.IWorkFlow;
+import com.ad.workflow.model.WorkFlowDocumentStep;
 import com.ad.workflow.model.WorkFlowNode;
 import com.ad.workflow.model.view.VWorkFlowDocument;
 
@@ -30,10 +32,22 @@ public abstract class NodeHandlerAdapter implements INodeHandler, DataBaseAware 
 	};
 
 	@Override
-	public void enter(Integer  fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
+	public WorkFlowDocumentStep enter(Integer  fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("enter invoke!");
 		}
+		
+		WorkFlowDocumentStep step = new WorkFlowDocumentStep();
+		step.setDid(document.getId());
+		step.setEnterdate(new Timestamp(System.currentTimeMillis()));
+		step.setNid(node.getId());
+		step.setUsrid(null);
+		step.setStatus(IWorkFlow.STEP_WORKING);
+		step.setFromnid(fromnode);
+		step.setFromsid(sid);
+		Map<String,Object> ids = this.db.insert(conn, step);
+		step.setId(Integer.parseInt(ids.get("id").toString()));
+		return step;
 	};
 
 	@Override
