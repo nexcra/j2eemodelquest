@@ -46,38 +46,38 @@ public class DefaultWorkFlowContext implements IWorkFlowContext {
 	@Override
 	public List<WorkFlowNode> getWorkFlowNodes(Connection conn, Integer wfid) throws SQLException {
 		QueryRunner qr = new QueryRunner();
-		return qr.query(conn, "select * from WORKFLOW_NODE where wfid=? order by id", new BeanListHandler<WorkFlowNode>(WorkFlowNode.class), new Object[] { wfid });
+		return qr.query(conn, "select * from WORKFLOW$NODE where wfid=? order by id", new BeanListHandler<WorkFlowNode>(WorkFlowNode.class), new Object[] { wfid });
 	}
 
 	@Override
 	public WorkFlowNode getWorkFlowNode(Connection conn, Integer nid) throws SQLException {
 		QueryRunner qr = new QueryRunner();
-		return qr.query(conn, "select * from WORKFLOW_NODE where id=?", new BeanHandler<WorkFlowNode>(WorkFlowNode.class), new Object[] { nid });
+		return qr.query(conn, "select * from WORKFLOW$NODE where id=?", new BeanHandler<WorkFlowNode>(WorkFlowNode.class), new Object[] { nid });
 	}
 
 	@Override
 	public List<WorkFlowTransition> getWorkFlowTransitions(Connection conn, Integer wfid) throws SQLException {
 		QueryRunner qr = new QueryRunner();
-		return qr.query(conn, "select * from WORKFLOW_TRANSITION where wfid=? order by id", new BeanListHandler<WorkFlowTransition>(WorkFlowTransition.class), new Object[] { wfid });
+		return qr.query(conn, "select * from WORKFLOW$TRANSITION where wfid=? order by id", new BeanListHandler<WorkFlowTransition>(WorkFlowTransition.class), new Object[] { wfid });
 	}
 
 	@Override
 	public WorkFlowTransition getWorkFlowTransition(Connection conn, Integer tid) throws SQLException {
 		QueryRunner qr = new QueryRunner();
-		return qr.query(conn, "select * from WORKFLOW_TRANSITION where id=?", new BeanHandler<WorkFlowTransition>(WorkFlowTransition.class), new Object[] { tid });
+		return qr.query(conn, "select * from WORKFLOW$TRANSITION where id=?", new BeanHandler<WorkFlowTransition>(WorkFlowTransition.class), new Object[] { tid });
 	}
 
 	@Override
 	public VWorkFlowDocument getVWorkFlowDocument(Connection conn, Integer did) throws SQLException {
 		QueryRunner qr = new QueryRunner();
-		return qr.query(conn, "select * from WORKFLOW_DOCUMENT where id=?", new BeanHandler<VWorkFlowDocument>(VWorkFlowDocument.class), new Object[] { did });
+		return qr.query(conn, "select * from WORKFLOW$DOCUMENT where id=?", new BeanHandler<VWorkFlowDocument>(VWorkFlowDocument.class), new Object[] { did });
 
 	}
 
 	@Override
 	public WorkFlowDocumentStep getWorkFlowDocumentStep(Connection conn, Integer sid) throws SQLException {
 		QueryRunner qr = new QueryRunner();
-		return qr.query(conn, "select * from WORKFLOW_DOCUMENT_STEPS where id=?", new BeanHandler<WorkFlowDocumentStep>(WorkFlowDocumentStep.class), new Object[] { sid });
+		return qr.query(conn, "select * from WORKFLOW$DOCUMENT_STEPS where id=?", new BeanHandler<WorkFlowDocumentStep>(WorkFlowDocumentStep.class), new Object[] { sid });
 
 	}
 

@@ -20,9 +20,8 @@ public class DefaultSubmitService implements DataBaseAware {
 		this.db = arg0;
 	}
 
-	public void submit(Integer did, Integer tid ,Integer sid, IUser usr) throws Exception {
+	public void submit(Connection conn ,Integer did, Integer tid ,Integer sid, IUser usr) throws Exception {
 		IWorkFlowContext cxt = DefaultWorkFlowContext.getInstance();
-		Connection conn = this.db.getDataSource().getConnection();
 		WorkFlowTransition transition = cxt.getWorkFlowTransition(conn, tid);
 		VWorkFlowDocument document = cxt.getVWorkFlowDocument(conn, did);
 		Object trans = Class.forName(transition.getExecute()).newInstance();

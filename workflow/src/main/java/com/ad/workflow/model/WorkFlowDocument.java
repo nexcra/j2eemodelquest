@@ -27,6 +27,15 @@ public class WorkFlowDocument implements Serializable {
 	protected Timestamp createtime;
 	protected Timestamp endtime;
 	protected Boolean status;
+	protected Integer nid;
+
+	public Integer getNid() {
+		return nid;
+	}
+
+	public void setNid(Integer nid) {
+		this.nid = nid;
+	}
 
 	public Integer getId() {
 		return id;

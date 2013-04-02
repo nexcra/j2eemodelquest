@@ -30,8 +30,7 @@ public class WorkFlowDocumentStep implements Serializable {
 	protected Timestamp submitdate;
 	protected Timestamp backdate;
 	protected String msg;
-	protected Integer status;// 0,解挂,1,挂起
-
+	protected Integer status =0;// 0,解挂,1,挂起
 	protected Integer fromnid;
 	protected Integer fromsid;
 

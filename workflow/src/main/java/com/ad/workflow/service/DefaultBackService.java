@@ -15,7 +15,7 @@ import com.ad.workflow.model.view.VWorkFlowDocument;
 public class DefaultBackService implements DataBaseAware {
 
 	private DBControl db;
-	private static String SQL = "select * from WORKFLOW_TRANSITION where tonode = ?";
+	private static String SQL = "select * from WORKFLOW$TRANSITION where tonode = ?";
 
 	@Override
 	public void setDBControl(DBControl arg0) {
@@ -23,9 +23,9 @@ public class DefaultBackService implements DataBaseAware {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void back(Integer did ,Integer nid ,Integer sid, IUser usr,String msg) throws Exception {
+	public void back(Connection conn ,Integer did ,Integer nid ,Integer sid, IUser usr,String msg) throws Exception {
 		IWorkFlowContext cxt = DefaultWorkFlowContext.getInstance();
-		Connection conn = this.db.getDataSource().getConnection();
+//		Connection conn = this.db.getDataSource().getConnection();
 		VWorkFlowDocument document = cxt.getVWorkFlowDocument(conn, did);
 		List<WorkFlowTransition> transitions = (List<WorkFlowTransition>) this.db.query2BeanList(SQL, WorkFlowTransition.class, new Object[]{nid});
 		Object transHdl;

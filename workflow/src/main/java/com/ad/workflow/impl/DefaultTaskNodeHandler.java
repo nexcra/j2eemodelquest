@@ -21,60 +21,58 @@ public class DefaultTaskNodeHandler extends NodeHandlerAdapter {
 	private Logger log = Logger.getLogger(DefaultTaskNodeHandler.class);
 
 	@Override
-	public void beforeEnter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn,Integer sid , IUser usr) throws Exception {
+	public void beforeEnter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("beforeEnter invoke!");
 		}
 	}
 
 	@Override
-	public WorkFlowDocumentStep enter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
+	public WorkFlowDocumentStep enter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("enter invoke!");
 		}
 		if (null == node.getUsrid()) {
 			throw new Exception("TaskNode节点需要指定一个usrid");
 		}
-		// this.db.update(conn,
-		// "update WORKFLOW_DOCUMENT set usrid = ? ,nid = ? where id =?", new
-		// Object[] { node.getUsrid(), node.getId(), document.getId() });
-//		WorkFlowDocumentStep step = new WorkFlowDocumentStep();
-//		step.setDid(document.getId());
-//		step.setEnterdate(new Timestamp(System.currentTimeMillis()));
-//		step.setNid(node.getId());
-//		step.setUsrid(node.getUsrid());
-//		step.setStatus(IWorkFlow.STEP_WORKING);
-//		step.setFromnid(fromnode);
-//		step.setFromsid(sid);
-//		this.db.insert(conn, step);
+		this.db.update(conn, "update WORKFLOW_DOCUMENT set usrid = ? ,nid = ? where id =?", new Object[] { node.getUsrid(), node.getId(), document.getId() });
+		// WorkFlowDocumentStep step = new WorkFlowDocumentStep();
+		// step.setDid(document.getId());
+		// step.setEnterdate(new Timestamp(System.currentTimeMillis()));
+		// step.setNid(node.getId());
+		// step.setUsrid(node.getUsrid());
+		// step.setStatus(IWorkFlow.STEP_WORKING);
+		// step.setFromnid(fromnode);
+		// step.setFromsid(sid);
+		// this.db.insert(conn, step);
 		return super.enter(fromnode, node, document, conn, sid, usr);
 	}
 
 	@Override
-	public void beforeSubmit(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
+	public void beforeSubmit(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("beforeSubmit invoke!");
 		}
 	}
 
 	@Override
-	public void submit(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
+	public void submit(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("submit invoke!");
 		}
-		super.submit(node, tonid, document, conn,sid , usr);
+		super.submit(node, tonid, document, conn, sid, usr);
 	}
 
 	@Override
-	public void beforeBack(WorkFlowNode node,Integer  tonid,VWorkFlowDocument document, Connection conn, Integer sid, IUser usr,String msg) throws Exception {
+	public void beforeBack(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr, String msg) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("beforeBack invoke!");
 		}
 	}
 
 	@Override
-	public void back(WorkFlowNode node,Integer  tonid, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr,String msg) throws Exception {
-		super.back(node, tonid, document, conn, sid, usr ,msg);
+	public void back(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr, String msg) throws Exception {
+		super.back(node, tonid, document, conn, sid, usr, msg);
 	}
 
 	@Override

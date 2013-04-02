@@ -1,12 +1,10 @@
 package com.ad.workflow.impl;
 
 import java.sql.Connection;
-import java.sql.Timestamp;
 
 import org.apache.log4j.Logger;
 
 import com.ad.mq.model.IUser;
-import com.ad.workflow.IWorkFlow;
 import com.ad.workflow.model.WorkFlowDocumentStep;
 import com.ad.workflow.model.WorkFlowNode;
 import com.ad.workflow.model.view.VWorkFlowDocument;
@@ -23,7 +21,7 @@ public class DefaultStartNodeHandler extends NodeHandlerAdapter {
 		if (log.isDebugEnabled()) {
 			log.debug("enter invoke!");
 		}
-		//this.db.update(conn, "update WORKFLOW_DOCUMENT set usrid = ? where id =?", new Object[] { usr.getUserId(), node.getId(), document.getId() });
+		this.db.update(conn, "update WORKFLOW_DOCUMENT set usrid = ? where id =?", new Object[] { usr.getUserId(), document.getId() });
 //		WorkFlowDocumentStep step = new WorkFlowDocumentStep();
 //		step.setDid(document.getId());
 //		step.setEnterdate(new Timestamp(System.currentTimeMillis()));
@@ -33,6 +31,8 @@ public class DefaultStartNodeHandler extends NodeHandlerAdapter {
 //		step.setFromnid(fromnode);
 //		step.setFromsid(sid);
 //		this.db.insert(conn, step);
-		return super.enter(fromnode, node, document, conn, sid, usr);
+		WorkFlowDocumentStep step = super.enter(fromnode, node, document, conn, sid, usr);
+		
+		return step;
 	}
 }
