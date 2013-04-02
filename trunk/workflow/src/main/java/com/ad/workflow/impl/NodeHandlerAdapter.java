@@ -37,14 +37,19 @@ public abstract class NodeHandlerAdapter implements INodeHandler, DataBaseAware 
 			log.debug("enter invoke!");
 		}
 		
+		
+		// this.db.update(conn,"update WORKFLOW$DOCUMENT set usrid = ? ,nid = ? where id =?", new Object[] { node.getUsrid(), node.getId(), document.getId() });
+		
+		
 		WorkFlowDocumentStep step = new WorkFlowDocumentStep();
 		step.setDid(document.getId());
 		step.setEnterdate(new Timestamp(System.currentTimeMillis()));
 		step.setNid(node.getId());
-		step.setUsrid(null);
+		step.setUsrid(usr.getUserId());
 		step.setStatus(IWorkFlow.STEP_WORKING);
 		step.setFromnid(fromnode);
 		step.setFromsid(sid);
+		step.setStatus(0);
 		Map<String,Object> ids = this.db.insert(conn, step);
 		step.setId(Integer.parseInt(ids.get("id").toString()));
 		return step;
@@ -62,7 +67,7 @@ public abstract class NodeHandlerAdapter implements INodeHandler, DataBaseAware 
 		if (log.isDebugEnabled()) {
 			log.debug("submit invoke!");
 		}
-		this.db.update(conn, "update WORKFLOW_DOCUMENT_STEPS  set SUBMITDATE =? ,status = ? where id=?",
+		this.db.update(conn, "update WORKFLOW$DOCUMENT$STEPS  set SUBMITDATE =? ,status = ? where id=?",
 				new Object[] { new Timestamp(System.currentTimeMillis()) ,IWorkFlow.STEP_SUBMIT ,sid });
 		// Object trans = Class.forName(transition.getExecute()).newInstance();
 		// if (trans instanceof DataBaseAware) {
@@ -88,7 +93,7 @@ public abstract class NodeHandlerAdapter implements INodeHandler, DataBaseAware 
 		if (log.isDebugEnabled()) {
 			log.debug("back invoke!");
 		}
-		this.db.update(conn, "update WORKFLOW_DOCUMENT_STEPS set status =?,backdate = ? ,msg=? where id = ?", new Object[]{ IWorkFlow.STEP_BACK  ,new Timestamp(System.currentTimeMillis())  ,msg ,sid});
+		this.db.update(conn, "update WORKFLOW$DOCUMENT$STEPS set status =?,backdate = ? ,msg=? where id = ?", new Object[]{ IWorkFlow.STEP_BACK  ,new Timestamp(System.currentTimeMillis())  ,msg ,sid});
 //		WorkFlowNode node = (WorkFlowNode) this.db.query2Bean(conn, "select * from WORKFLOW_NODE where id=?", WorkFlowNode.class, new Object[] { transition.getFromnode() });
 //		Object nodeHandler = Class.forName(node.getHandler()).newInstance();
 //		if (nodeHandler instanceof DataBaseAware) {

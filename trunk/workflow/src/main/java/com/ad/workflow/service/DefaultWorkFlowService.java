@@ -19,6 +19,11 @@ public class DefaultWorkFlowService implements IWorkFlow {
 
 	private DBControl db;
 
+	private String SQL = "SELECT a.id," + "a.wfid," + "a.usrid," + "a.createtime," + "a.endtime," + "a.status," + "b.name wfname," + "c.id AS nid," + "c.name nodename," + "d.USERNAME usrname,"
+			+ "c.TYPE nodetype," + "e.enterdate," + "e.submitdate," + "e.backdate," + "e.status stepstatus," + "e.msg," + "e.id AS stepid " + "FROM WORKFLOW$DOCUMENT a," + "workflow b,"
+			+ "workflow$node c," + "usertable d," + "workflow$document$steps e " + "WHERE     a.wfid = b.id " + " AND a.usrid = d.userid " + " AND A.ID = e.did " + "AND c.id = e.nid "
+			+ "AND e.status = 0 " + "AND a.id =?";
+
 	public void setDb(DBControl db) {
 		this.db = db;
 	}
@@ -29,7 +34,7 @@ public class DefaultWorkFlowService implements IWorkFlow {
 	@Override
 	public VWorkFlowDocument Start(Connection conn, Integer wfid, IUser usr) throws Exception {
 
-		WorkFlowNode node = (WorkFlowNode) this.db.query2Bean(conn, " select * from WORKFLOW_NODE where wfid = ? and type=?", WorkFlowNode.class, new Object[] { wfid, IWorkFlow.NODE_START });
+		WorkFlowNode node = (WorkFlowNode) this.db.query2Bean(conn, " select * from WORKFLOW$NODE where wfid = ? and type=?", WorkFlowNode.class, new Object[] { wfid, IWorkFlow.NODE_START });
 
 		WorkFlowDocument doc = new WorkFlowDocument();
 		VWorkFlowDocument document = new VWorkFlowDocument();
@@ -38,11 +43,13 @@ public class DefaultWorkFlowService implements IWorkFlow {
 		doc.setCreatetime(new Timestamp(System.currentTimeMillis()));
 		doc.setWfid(wfid);
 		doc.setStatus(true);
+		doc.setNid(node.getId());
 
 		document.setUsrid(doc.getUsrid());
 		document.setCreatetime(doc.getCreatetime());
 		document.setWfid(doc.getWfid());
 		document.setStatus(doc.getStatus());
+		document.setNid(node.getId());
 
 		Object nodeHandler = Class.forName(node.getHandler()).newInstance();
 		if (nodeHandler instanceof DataBaseAware) {
@@ -50,7 +57,7 @@ public class DefaultWorkFlowService implements IWorkFlow {
 		}
 
 		if (nodeHandler instanceof INodeHandler) {
-			((INodeHandler) nodeHandler).beforeEnter(null, node, document, conn, null ,usr);
+			((INodeHandler) nodeHandler).beforeEnter(null, node, document, conn, null, usr);
 		} else {
 			new RuntimeException(node.getHandler() + "不是INodeHandler的实现类！");
 		}
@@ -60,10 +67,9 @@ public class DefaultWorkFlowService implements IWorkFlow {
 		doc.setId(did);
 		document.setId(doc.getId());
 
-		((INodeHandler) nodeHandler).enter(null, node, document, conn, null ,usr);
+		((INodeHandler) nodeHandler).enter(null, node, document, conn, null, usr);
 
-		String sql = "select a.*,b.name wfname ,c.id as nid,c.name nodename ,d.USERNAME usrname,c.type nodetype,e.enterdate ,e.submitdate ,e.backdate ,e.status stepstatus,e.msg,e.id as stepid  from     WORKFLOW_DOCUMENT a,    workflow b,    workflow_node c,    usertable d,    workflow_document_steps e where     a.wfid = b.id and    a.usrid = d.userid and    A.ID = e.did and    c.id = e.nid and        e.status = 0 and a.id=?";
-		document = (VWorkFlowDocument) this.db.query2Bean(conn, sql, VWorkFlowDocument.class, new Object[] { doc.getId() });
+		document = (VWorkFlowDocument) this.db.query2Bean(conn, SQL, VWorkFlowDocument.class, new Object[] { doc.getId() });
 
 		return document;
 	}
@@ -74,13 +80,13 @@ public class DefaultWorkFlowService implements IWorkFlow {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<WorkFlowTransition> getTransitionsByNode(Connection conn, Integer nid) throws Exception {
-		return (List<WorkFlowTransition>) this.db.query2BeanList(conn, " select * from WORKFLOW_TRANSITION where fromnode =? order by id", WorkFlowTransition.class, new Object[] { nid });
+		return (List<WorkFlowTransition>) this.db.query2BeanList(conn, " select * from WORKFLOW$TRANSITION where fromnode =? order by id", WorkFlowTransition.class, new Object[] { nid });
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<WorkFlowTransition> getTransitionsByDocument(Connection conn, Integer did) throws Exception {
-		return (List<WorkFlowTransition>) this.db.query2BeanList(conn, "select a.* from WORKFLOW_TRANSITION a,workFlow_document b where a.fromnode = b.nid and b.id=? order by a.id",
+		return (List<WorkFlowTransition>) this.db.query2BeanList(conn, "select a.* from WORKFLOW$TRANSITION a,workFlow_document b where a.fromnode = b.nid and b.id=? order by a.id",
 				WorkFlowTransition.class, new Object[] { did });
 
 	}

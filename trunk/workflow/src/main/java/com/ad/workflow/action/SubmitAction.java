@@ -1,5 +1,6 @@
 package com.ad.workflow.action;
 
+import java.sql.Connection;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -52,13 +53,19 @@ public class SubmitAction extends ActionSupport implements DataBaseAware, Sessio
 	public void execute() throws Exception {
 		OutData outdata = new OutData();
 		this.out = outdata;
+		Connection conn= null;
 		DefaultSubmitService service = new DefaultSubmitService();
+		
 		service.setDBControl(this.db);
 		IUser usr = (IUser) this.session.get("user");
 		try {
-			service.submit(did, tid, sid ,usr);
+			conn =this.db.getDataSource().getConnection();
+			conn.setAutoCommit(false);
+			service.submit(conn ,did, tid, sid ,usr);
+			conn.commit();
 		} catch (Exception ex) {
 			outdata.setMessage(ex.getLocalizedMessage());
+			conn.rollback();
 			log.error(ex);
 			ex.printStackTrace();
 		}

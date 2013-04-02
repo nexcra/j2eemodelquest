@@ -16,7 +16,7 @@ public class DefaultWorkFlowStepService implements DataBaseAware {
 	}
 
 	public void saveMsg(Connection conn, Integer sid, String msg) throws SQLException {
-		this.db.update(conn, "update WORKFLOW_DOCUMENT_STEPS set msg  =? where id = ?", new Object[] { msg, sid });
+		this.db.update(conn, "update WORKFLOW$DOCUMENT$STEPS set msg  =? where id = ?", new Object[] { msg, sid });
 	}
 
 }

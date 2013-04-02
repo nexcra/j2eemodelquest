@@ -1,5 +1,6 @@
 package com.ad.workflow.action;
 
+import java.sql.Connection;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -58,12 +59,18 @@ public class BackAction extends ActionSupport implements DataBaseAware, SessionA
 		OutData outdata = new OutData();
 		this.out = outdata;
 		DefaultBackService service = new DefaultBackService();
+		Connection conn = null;
 		service.setDBControl(this.db);
 		IUser usr = (IUser) this.session.get("user");
 		try {
-			service.back(did, nid, sid, usr, msg);
+			conn = this.db.getDataSource().getConnection();
+			conn.setAutoCommit(false);
+			service.back(conn ,did, nid, sid, usr, msg);
+			this.db.getDataSource().getConnection().commit();
 		} catch (Exception ex) {
+			conn.rollback();
 			outdata.setMessage(ex.getLocalizedMessage());
+			this.db.getDataSource().getConnection().rollback();
 			log.error(ex);
 			ex.printStackTrace();
 		}

@@ -18,38 +18,46 @@ public class DefaultBranchNodeHandler extends NodeHandlerAdapter {
 
 	@Override
 	public WorkFlowDocumentStep enter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
-		WorkFlowDocumentStep curtStep = super.enter(fromnode, node, document, conn, sid, usr);//当前步骤编号
+		WorkFlowDocumentStep curtStep = super.enter(fromnode, node, document, conn, sid, usr);// 当前步骤编号
+
+		this.db.update(conn, "update WORKFLOW_DOCUMENT set usrid = ? ,nid = ? where id =?", new Object[] { node.getUsrid(), node.getId(), document.getId() });
 		
-		if (curtStep.getNid() <curtStep.getFromnid()){ //回退
+		if (curtStep.getNid() < curtStep.getFromnid()) { // 回退
 			DefaultBackService service = new DefaultBackService();
 			service.setDBControl(this.db);
-			service.back(document.getId(), curtStep.getNid(), curtStep.getId(), usr, null);
-		}else{ //提交
-			Integer transitionId =getTransitionId(document ,curtStep ,node.getCfg());
+			service.back(conn ,document.getId(), curtStep.getNid(), curtStep.getId(), usr, null);
+		} else { // 提交
+			Integer transitionId = 0;
+
+			transitionId = getTransitionId(conn ,document, curtStep, node.getCfg());
 			DefaultSubmitService service = new DefaultSubmitService();
 			service.setDBControl(this.db);
-			service.submit(document.getId(), transitionId, curtStep.getId(), usr);
+			service.submit(conn ,document.getId(), transitionId, curtStep.getId(), usr);
+
 		}
-		
 
 		return curtStep;
 	}
 
-	
-	public Integer getTransitionId(VWorkFlowDocument document,WorkFlowDocumentStep step ,String cfg) throws Exception{
+	public Integer getTransitionId(Connection conn ,VWorkFlowDocument document, WorkFlowDocumentStep step, String cfg) throws Exception {
 		ScriptEngineManager manager = new ScriptEngineManager();
 		ScriptEngine engine = manager.getEngineByName("javascript");
 		String handlerName = null;
 		String outCfg = null;
 		Integer transitionId = null;
-		// function getValueHandler() {return 'com.ad.mq...';} function getBranchId(value) {return c;}
+		// function getValueHandler() {return 'com.ad.mq...';} function
+		// getBranchId(value) {return c;}
+
 		engine.eval(cfg);
-		Invocable invoke = (Invocable)engine;
+		Invocable invoke = (Invocable) engine;
 		handlerName = (String) invoke.invokeFunction("getValueHandler");
 		outCfg = (String) invoke.invokeFunction("getValueHandlerCFG");
 		IValueHandler hanlder = (IValueHandler) Class.forName(handlerName).newInstance();
 		hanlder.setDBCtl(this.db);
-		transitionId = (Integer) invoke.invokeFunction("getBranchId", hanlder.getValue(document, step,outCfg));
+		String returnVal = invoke.invokeFunction("getBranchId", hanlder.getValue(conn ,document, step, outCfg)).toString();
+		System.out.println(returnVal);
+		transitionId = Integer.parseInt(returnVal);
+
 		return transitionId;
 	}
 }
