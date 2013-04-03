@@ -30,12 +30,12 @@ Ext.define('com.ad.workflow.ApproveWindow', {
 									_window : me,
 									_grid : me._grid,
 									disabled : (me._document.nodetype === 0) ? true : false
-								}), Ext.create('com.ad.workflow.SuspendBtn', {
+								})/*, Ext.create('com.ad.workflow.SuspendBtn', {
 									_document : me._document,
 									_window : me,
 									_grid : me._grid,
 									disabled : (me._document.nodetype === 0) ? true : false
-								})];
+								})*/];
 				me.items = Ext.create('com.ad.workflow.ApproveView', {
 							_document : me._document
 						})

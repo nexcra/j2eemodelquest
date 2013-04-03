@@ -25,6 +25,13 @@ Ext.define('com.ad.workflow.SubmitBtn', {
 				if (me._grid) {
 					me._document = me._grid.getView().getSelectionModel().getSelection()[0].data;
 				}
+				var ok = 1;
+				me._window.query('tabpanel')[0].items.each( function(item){
+					if(Ext.type(item.beforeSubmit)=='function'){
+						ok =item.beforeSumbit();
+					}
+				} );
+				if (!ok)return;
 				Ext.create('com.ad.workflow.TransitionWindow', {
 							_document : me._document,
 							_aftersubmitFN : function(input) {

@@ -21,6 +21,13 @@ Ext.define('com.ad.workflow.BackBtn', {
 			itemId : 'com_ad_workflow_BackBtn',
 			handler : function() {
 				var me = this;
+				var ok = 1;
+				me._window.query('tabpanel')[0].items.each( function(item){
+					if(Ext.type(item.beforeBack)=='function'){
+						ok =item.beforeBack();
+					}
+				} );
+				if (!ok)return;
 //				prompt( String title, String msg, [Function fn], [Object scope], [Boolean/Number multiline], [String value] ) : Ext.window.MessageBox
 				Ext.Msg.prompt('提醒', '请填写回退原因:', function(btn ,txt) {
 							if (Ext.isEmpty(txt))

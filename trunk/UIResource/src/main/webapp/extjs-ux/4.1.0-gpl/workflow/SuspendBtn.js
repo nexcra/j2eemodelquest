@@ -5,7 +5,8 @@
 Ext.define('com.ad.workflow.SuspendBtn', {
 			extend : 'Ext.Button',
 			config : {
-				_document : null
+				_document : null,
+				_window:null
 			},
 			constructor : function(cfg) {
 				this.callParent(arguments);
@@ -18,5 +19,13 @@ Ext.define('com.ad.workflow.SuspendBtn', {
 			disabled : true,
 			itemId : 'com_ad_workflow_SuspendBtn',
 			handler : function() {
+				var me = this;
+				var ok = 1;
+				me._window.query('tabpanel')[0].items.each( function(item){
+					if(Ext.type(item.beforeSuspend)=='function'){
+						ok =item.beforeSuspend();
+					}
+				} );
+				if (!ok)return;
 			}
 		});

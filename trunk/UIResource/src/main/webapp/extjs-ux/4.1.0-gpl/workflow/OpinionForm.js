@@ -46,6 +46,9 @@ Ext.define('com.ad.workflow.OpinionForm', {
 											msg : form.down('#msg').getValue()
 										},
 										callback : function(input) {
+											if (input && input.message){
+												window.alert(input.message);
+											}
 										}
 									});
 						}
