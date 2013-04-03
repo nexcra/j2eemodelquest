@@ -13,8 +13,9 @@ Ext.define('com.ad.workflow.TransitionWindow', {
 			border : 0,
 			config : {
 				_document : null, // document数据
-				_aftersubmitFN : null
-				// 确定提交后的callback
+				_aftersubmitFN : null,// 确定提交后的callback
+				_beforesubmitFN : null//提交前
+				
 			},
 			constructor : function(cfg) {
 				this.callParent(arguments);
