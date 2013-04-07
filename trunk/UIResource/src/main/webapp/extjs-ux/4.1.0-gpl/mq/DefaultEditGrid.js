@@ -26,6 +26,7 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 			// stateful : true,
 			// stateId : 'DataObjectGrid',
 			// loadMask : true,
+			emptyText: '没有数据',
 			viewConfig : {
 				stripeRows : true,
 				loadMask : true
@@ -53,7 +54,8 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 				Ext.apply(me, _cfg.grid || {});
 
 				var filtersFeature = Ext.create('Ext.ux.grid.FiltersFeature', {
-							encode : true
+							encode : true,
+							local : false
 						});
 
 				me.features = [filtersFeature];

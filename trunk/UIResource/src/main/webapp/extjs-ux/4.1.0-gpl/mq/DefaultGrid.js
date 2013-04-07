@@ -25,6 +25,11 @@ Ext.define('com.ad.mq.DefaultGrid', {
 			border : false,
 			grouping : false,
 			msgLabelField : null,
+			emptyText: '没有数据',
+			features : [Ext.create('Ext.ux.grid.FiltersFeature', {
+						encode : true,
+						local : false
+					})],
 			msgType : {
 				NOM : 0,
 				WRN : 1,
@@ -61,20 +66,15 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				Ext.apply(me, _cfg.grid || {});
 
 				
-				me.columns = me.getColumnsCfg(_data);
-				me.features = [{
-							ftype : 'filters',
-							encode : true, 
-							local : false
-						}];
 				var fields = me.getFieldsCfg(_data);
-
 				var modelName = 'Model_' + _dataid;
 				Ext.define(modelName, {
 							extend : 'Ext.data.Model',
 							fields : fields,
 							idProperty : Ext.typeOf(me.idProperty) === 'string' ? me.idProperty : null
 						});
+						
+				me.columns = me.getColumnsCfg(_data);
 				var queryActionId = _cfg.grid.select_actionid || 1000;
 
 				var params = {
@@ -333,7 +333,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 								me.preGroup(panel);
 							}
 						});
-				
+
 				me.callParent();
 			},
 			preGroup : function(panel) {
@@ -499,14 +499,14 @@ Ext.define('com.ad.mq.DefaultGrid', {
 												callback : function(dd) {
 													if (dd.data > 0)
 														me.getStore().load();
-													else{
-														if(Ext.isEmpty(dd.message)){
+													else {
+														if (Ext.isEmpty(dd.message)) {
 															Ext.Msg.alert('删除数据失败！');
-														}else{
+														} else {
 															Ext.Msg.alert(dd.message);
 														}
 													}
-														
+
 												}
 											});
 
@@ -550,8 +550,9 @@ Ext.define('com.ad.mq.DefaultGrid', {
 								dataIndex : value.fieldvalue,
 								text : value.fieldname,
 								eleid : value.id,
-								gridindex : value.gridindex,
-								ftype : value.ftype
+								gridindex : value.gridindex
+//								,
+//								ftype : value.ftype
 							};
 							if (value.columnattrs) {
 								Ext.apply(column, Ext.JSON.decode(value.columnattrs) || {});
