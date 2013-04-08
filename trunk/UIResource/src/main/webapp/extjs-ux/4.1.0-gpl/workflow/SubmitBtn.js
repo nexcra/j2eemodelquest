@@ -27,9 +27,12 @@ Ext.define('com.ad.workflow.SubmitBtn', {
 				}
 				var ok = 1;
 				me._window.query('tabpanel')[0].items.each( function(item){
-					if(Ext.type(item.beforeSubmit)=='function'){
-						ok =item.beforeSumbit();
-					}
+					item.items.each(function(subitem){
+						if(Ext.type(subitem.beforeSubmit)=='function'){
+							ok =subitem.beforeSubmit();
+						}
+					});
+					
 				} );
 				if (!ok)return;
 				Ext.create('com.ad.workflow.TransitionWindow', {
