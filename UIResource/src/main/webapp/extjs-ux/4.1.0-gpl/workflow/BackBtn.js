@@ -23,9 +23,12 @@ Ext.define('com.ad.workflow.BackBtn', {
 				var me = this;
 				var ok = 1;
 				me._window.query('tabpanel')[0].items.each( function(item){
-					if(Ext.type(item.beforeBack)=='function'){
-						ok =item.beforeBack();
-					}
+					item.items.each(function(subitem){
+						if(Ext.type(subitem.beforeBack)=='function'){
+							ok =subitem.beforeBack();
+						}
+					});
+					
 				} );
 				if (!ok)return;
 //				prompt( String title, String msg, [Function fn], [Object scope], [Boolean/Number multiline], [String value] ) : Ext.window.MessageBox
