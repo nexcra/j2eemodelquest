@@ -3,6 +3,7 @@ package com.ad.workflow.action;
 import java.sql.Connection;
 import java.util.Map;
 
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.log4j.Logger;
 
 import com.ad.mq.action.ActionSupport;
@@ -66,13 +67,16 @@ public class BackAction extends ActionSupport implements DataBaseAware, SessionA
 			conn = this.db.getDataSource().getConnection();
 			conn.setAutoCommit(false);
 			service.back(conn ,did, nid, sid, usr, msg);
-			this.db.getDataSource().getConnection().commit();
+			conn.commit();
 		} catch (Exception ex) {
 			conn.rollback();
 			outdata.setMessage(ex.getLocalizedMessage());
 			this.db.getDataSource().getConnection().rollback();
 			log.error(ex);
 			ex.printStackTrace();
+			throw ex;
+		}finally{
+			DbUtils.close(conn);
 		}
 
 	}

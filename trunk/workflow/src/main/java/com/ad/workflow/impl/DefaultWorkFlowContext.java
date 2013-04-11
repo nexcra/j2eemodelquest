@@ -77,7 +77,7 @@ public class DefaultWorkFlowContext implements IWorkFlowContext {
 	@Override
 	public WorkFlowDocumentStep getWorkFlowDocumentStep(Connection conn, Integer sid) throws SQLException {
 		QueryRunner qr = new QueryRunner();
-		return qr.query(conn, "select * from WORKFLOW$DOCUMENT_STEPS where id=?", new BeanHandler<WorkFlowDocumentStep>(WorkFlowDocumentStep.class), new Object[] { sid });
+		return qr.query(conn, "select * from WORKFLOW$DOCUMENT$STEPS where id=?", new BeanHandler<WorkFlowDocumentStep>(WorkFlowDocumentStep.class), new Object[] { sid });
 
 	}
 
