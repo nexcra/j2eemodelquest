@@ -1,12 +1,10 @@
 package com.ad.workflow.impl;
 
 import java.sql.Connection;
-import java.sql.Timestamp;
 
 import org.apache.log4j.Logger;
 
 import com.ad.mq.model.IUser;
-import com.ad.workflow.IWorkFlow;
 import com.ad.workflow.model.WorkFlowDocumentStep;
 import com.ad.workflow.model.WorkFlowNode;
 import com.ad.workflow.model.view.VWorkFlowDocument;
@@ -35,7 +33,7 @@ public class DefaultTaskNodeHandler extends NodeHandlerAdapter {
 		if (null == node.getUsrid()) {
 			throw new Exception("TaskNode节点需要指定一个usrid");
 		}
-		this.db.update(conn, "update WORKFLOW_DOCUMENT set usrid = ? ,nid = ? where id =?", new Object[] { node.getUsrid(), node.getId(), document.getId() });
+		this.db.update(conn, "update WORKFLOW$DOCUMENT set usrid = ? ,nid = ? where id =?", new Object[] { node.getUsrid(), node.getId(), document.getId() });
 		// WorkFlowDocumentStep step = new WorkFlowDocumentStep();
 		// step.setDid(document.getId());
 		// step.setEnterdate(new Timestamp(System.currentTimeMillis()));

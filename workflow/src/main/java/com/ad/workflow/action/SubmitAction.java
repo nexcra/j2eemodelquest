@@ -3,6 +3,7 @@ package com.ad.workflow.action;
 import java.sql.Connection;
 import java.util.Map;
 
+import org.apache.commons.dbutils.DbUtils;
 import org.apache.log4j.Logger;
 
 import com.ad.mq.action.ActionSupport;
@@ -68,6 +69,9 @@ public class SubmitAction extends ActionSupport implements DataBaseAware, Sessio
 			conn.rollback();
 			log.error(ex);
 			ex.printStackTrace();
+			throw ex;
+		}finally{
+			DbUtils.close(conn);
 		}
 
 	}

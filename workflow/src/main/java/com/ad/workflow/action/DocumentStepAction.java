@@ -42,10 +42,21 @@ public class DocumentStepAction extends ActionSupport implements DataBaseAware, 
 
 	@Override
 	public void execute() throws Exception {
-		DefaultWorkFlowStepService service = new DefaultWorkFlowStepService();
-		service.setDBControl(this.db);
-		service.saveMsg(this.db.getDataSource().getConnection(), sid, msg);
+		
 
+		OutData outdata = new OutData();
+		this.out = outdata;
+		
+		try{
+			DefaultWorkFlowStepService service = new DefaultWorkFlowStepService();
+			service.setDBControl(this.db);
+			service.saveMsg(this.db.getDataSource().getConnection(), sid, msg);
+		}catch(Exception e){
+			outdata.setMessage(e.getMessage());
+		}
+		
+		
+		
 	}
 
 	public void getStep() throws Exception {
