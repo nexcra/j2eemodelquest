@@ -32,13 +32,25 @@ Ext.define('com.ad.workflow.OpinionForm', {
 							name : 'msg',
 							itemId : 'msg',
 							value : me._document.msg
+							
 						}];
 				me.callParent();
+			},
+			beforeSubmit:function(){
+				var me = this;
+				if (Ext.isEmpty(me.allowBlank))
+					return true;
+				if (!me.allowBlank && Ext.isEmpty(me.down('#msg').getValue())){	
+					Ext.Msg.alert('提醒','请填写意见！');
+					return false;
+				}
+				return true;
 			},
 			buttons : [{
 						text : '保存',
 						handler : function() {
 							var form = this.up('form');
+							
 							com.ad.ajax({
 										params : {
 											$actionid : 202,
