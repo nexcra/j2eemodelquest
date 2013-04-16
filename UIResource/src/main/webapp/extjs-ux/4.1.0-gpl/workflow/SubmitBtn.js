@@ -23,30 +23,27 @@ Ext.define('com.ad.workflow.SubmitBtn', {
 			handler : function() {
 				var me = this;
 				if (me._grid) {
-					me._document = me._grid.getView().getSelectionModel().getSelection()[0].data;
+					me._document = me._grid.getSelectionModel().getSelection()[0].data;
 				}
 				var ok = 1;
-				me._window.query('tabpanel')[0].items.each( function(item){
-					item.items.each(function(subitem){
-						if(Ext.type(subitem.beforeSubmit)=='function'){
-							ok =subitem.beforeSubmit();
-						}
-					});
-					
-				} );
-				if (!ok)return;
+				me._window.query('tabpanel')[0].items.each(function(item) {
+							var o = item.items.getAt(0);
+							if (Ext.type(o.beforeSubmit) === 'function') {
+								ok = o.beforeSubmit();
+							}
+
+						});
+				if (!ok)
+					return;
 				Ext.create('com.ad.workflow.TransitionWindow', {
 							_document : me._document,
 							_aftersubmitFN : function(input) {
-								// console.log(input);
-								// console.log(me._window);
-								// console.log(me._grid);
 								if (Ext.isEmpty(input.message)) {
 									if (me._window) {
 										me._window.close();
 									}
 									if (me._grid) {
-										me._grid.getStore().load();
+										me._grid.doRefresh();
 									}
 								} else {
 									window.alert(input.message);

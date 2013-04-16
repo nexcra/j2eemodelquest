@@ -33,10 +33,12 @@ Ext.define('com.ad.workflow.ApproveView', {
 								$dataid : 201,
 								nid : me._document.nid
 							},
+							
 							callback : function(input) {
 								var datas = input.data;
 								var cfg = {};
 								for (var i = 0, len = datas.length; i < len; i++) {
+									cfg = {};
 									itemCfg.title = datas[i].title;
 									itemCfg.tabTip = datas[i].tabTip;
 									itemCfg.iconCls = datas[i].iconCls;
@@ -54,6 +56,7 @@ Ext.define('com.ad.workflow.ApproveView', {
 												_document : me._document,
 												_view : datas[i]
 											});
+									
 									itemCfg.items = Ext.create(datas[i].clazz, cfg);
 									me.add(itemCfg).show();
 
