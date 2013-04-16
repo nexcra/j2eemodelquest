@@ -45,7 +45,7 @@ public abstract class NodeHandlerAdapter implements INodeHandler, DataBaseAware 
 		step.setDid(document.getId());
 		step.setEnterdate(new Timestamp(System.currentTimeMillis()));
 		step.setNid(node.getId());
-		step.setUsrid(node.getUsrid());
+		step.setUsrid((node.getType()==0 && node.getUsrid()==null)?usr.getUserId():node.getUsrid());
 		step.setStatus(IWorkFlow.STEP_WORKING);
 		step.setFromnid(fromnode);
 		step.setFromsid(sid);
