@@ -37,7 +37,7 @@ Ext.define('Ext.ux.grid.filter.DateFilter', {
      * @cfg {String} beforeText
      * Defaults to 'Before'.
      */
-    beforeText : '小',
+    beforeText : '小于',
     /**
      * @cfg {Object} compareMap
      * Map for assigning the comparison values used in serialization.
