@@ -22,19 +22,22 @@ Ext.define('com.ad.workflow.BackBtn', {
 			handler : function() {
 				var me = this;
 				var ok = 1;
-				me._window.query('tabpanel')[0].items.each( function(item){
-					item.items.each(function(subitem){
-						if(Ext.type(subitem.beforeBack)=='function'){
-							ok =subitem.beforeBack();
-						}
-					});
-					
-				} );
-				if (!ok)return;
-//				prompt( String title, String msg, [Function fn], [Object scope], [Boolean/Number multiline], [String value] ) : Ext.window.MessageBox
-				Ext.Msg.prompt('提醒', '请填写回退原因:', function(btn ,txt) {
+				me._window.query('tabpanel')[0].items.each(function(item) {
+
+							var o = item.items.getAt(0);
+							if (Ext.type(o.beforeBack) === 'function') {
+								ok = o.beforeBack();
+							}
+
+						});
+				if (!ok)
+					return;
+				// prompt( String title, String msg, [Function fn], [Object
+				// scope], [Boolean/Number multiline], [String value] ) :
+				// Ext.window.MessageBox
+				Ext.Msg.prompt('提醒', '请填写回退原因:', function(btn, txt) {
 							if (Ext.isEmpty(txt))
-							return false;
+								return false;
 							if (btn === 'ok') {
 								com.ad.ajax({
 											params : {
@@ -47,14 +50,14 @@ Ext.define('com.ad.workflow.BackBtn', {
 											callback : function(input) {
 												if (Ext.isEmpty(input.message)) {
 													me._window.close();
-													me._grid.getStore().load();
-												}else{
-													Ext.Msg.alert('警告',input.message);
+													me._grid.doRefresh();
+												} else {
+													Ext.Msg.alert('警告', input.message);
 												}
-												
+
 											}
 										});
 							}
-						}, this ,2);
+						}, this, 2);
 			}
 		});

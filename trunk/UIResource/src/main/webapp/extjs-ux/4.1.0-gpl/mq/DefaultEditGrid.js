@@ -26,7 +26,7 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 			// stateful : true,
 			// stateId : 'DataObjectGrid',
 			// loadMask : true,
-			emptyText: '没有数据',
+			emptyText : '没有数据',
 			viewConfig : {
 				stripeRows : true,
 				loadMask : true
@@ -62,14 +62,23 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 
 				if ((_auth & 4) === 4) {
 					var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
+								saveBtnText : '保存',
+								cancelBtnText : '取消',
+								errorsText : '错误',
+								dirtyText : '请先保存修改！',
 								clicksToMoveEditor : 1,
 								autoCancel : false,
-								pluginId : 'rowEditing'
+								pluginId : 'rowEditing',
+								listeners : {
+									edit : function(editor, context, eOpts) {
+										me.doSave(editor, context, eOpts);
+									},
+									validateedit : function(editor, context, eOpts) {
+										me.doValidateedit(editor, context, eOpts);
+									}
+								}
 							});
 					me.plugins = [rowEditing];
-					me.on('edit', function(editor, e) {
-								me.doSave(editor, e);
-							});
 				}
 				var store = Ext.create('App.store.JsonStore', me.parseStoreCfg(_cfg, _data, _dataid));
 				me.store = store;
@@ -141,34 +150,60 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 			},
 			doRefresh : function() {
 				this.getStore().load();
+				this.getSelectionModel().clearSelections();
 			},
-			doSave : function(editor, e) {
-				var me = this;
+			doValidateedit : function(editor, context, eOpts) {
+				
+				
+//				if (hasChange) {
+//					var newData = Ext.clone(context.record.data);
+//					Ext.apply(newData, data);
+//					context.originalValues = newData;
+//				}else{
+//					context.originalValues = context.record.data;
+//				}
 
+			},
+			doSave : function(editor, context) {
+				var me = this;
+				var dirty = context.record.dirty;
+				if (!dirty)
+					return;
 				if (!me.idProperty) {
-					Ext.Msg.alert('提醒', '需要指定一个主键字段，请联系管理员！');
+					Ext.Msg.alert('提醒', '需要指定一个主键字段！');
 					return;
 				}
 
-				var field = e.column.field;
+				
+				var columns = editor.grid.columns;
+				var data = context.record.data;
+			    var hasChange = false;
+				Ext.Array.each(columns, function(colmn, index, countriesItSelf) {
+							var field = colmn.field;
+							if (field.$className === 'Ext.form.field.ComboBox' && field.store.aliasFields) {
+								if (field.getValue() !== field.getRawValue()) {
+									data[field.store.aliasFields[0]] = field.getValue();
+									data[field.store.aliasFields[1]] = field.getRawValue();
+									 hasChange = true;
+									 console.log(field.getValue());
+								}
 
-				if (field.$className === 'Ext.form.field.ComboBox' && field.store.aliasFields) {
-					e.record.data[field.store.aliasFields[0]] = field.getValue();
-					e.record.data[field.store.aliasFields[1]] = field.getRawValue();
-					e.newValues = e.record.data;
-				}
+							}
+						});
+				
+				
 				var params = Ext.clone(me.getStore().getProxy().extraParams);
 				var insertActionId = me.input.cfg.form.insert_actionid || 1003;
 				var updateActionId = me.input.cfg.form.update_actionid || 1001;
 				var isNew = false;
 				if (me.idProperty.constructor == String) {
-					if (!e.record.get(me.idProperty)) {
+					if (!context.record.get(me.idProperty)) {
 						isNew = true;
 					}
 				} else if (me.idProperty.constructor == Array) {
 					for (var i = 0, len = me.idProperty.length; i < len; i++) {
-						if (!e.record.get(me.idProperty[i])) {
-							sNew = true;
+						if (!context.record.get(me.idProperty[i])) {
+							isNew = true;
 							break;
 						}
 					}
@@ -177,19 +212,18 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 							$actionid : !isNew ? updateActionId : insertActionId,
 							$dataid : me.input.dataid
 						});
-				Ext.apply(params, e.record.data);
+				Ext.apply(params, data);
 				com.ad.ajax({
 							params : params,
 							callback : function(returndata) {
 								if (returndata.data) {
-									if (returndata.data.constructor == Object) {
-										for (var vv in returndata.data) {
-											e.record.set(vv, returndata.data[vv]);
-										}
+									if (isNew) {
+										me.doRefresh();
+									} else {
+										context.record.commit();
 									}
-									e.record.commit();
-									// me.load();
-									// me.doRefresh();
+
+									// 
 								} else {
 									Ext.Msg.alert('提醒', '数据保存失败！');
 								}
@@ -200,12 +234,13 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 			},
 			doAdd : function() {
 				var me = this;
+				var params = Ext.clone(me.getStore().getProxy().extraParams);
 				var rowEditing = me.getPlugin('rowEditing');
 				// if (!rowEditing)
 				// return;
 				rowEditing.cancelEdit();
 				// Create a model instance
-				var r = Ext.create(me.getStore().model, {});
+				var r = Ext.create(me.getStore().model, params);
 				me.getStore().insert(0, r);
 				rowEditing.startEdit(0, 0);
 			},

@@ -5,10 +5,13 @@
 Ext.define('com.ad.workflow.ApproveWindow', {
 			extend : 'Ext.window.Window',
 			height : 600,
-			width : 800,
+			width : 900,
 			layout : 'fit',
-			shadow : false,
 			modal : true,
+			minimizable : true,
+			maximizable : true,
+			resizable : true,
+			closable : true,
 			config : {
 				_document : null,
 				_grid : null
@@ -20,6 +23,7 @@ Ext.define('com.ad.workflow.ApproveWindow', {
 			},
 			initComponent : function() {
 				var me = this;
+				
 				me.title = '审批视图[' + me._document.id + ']';
 				me.tbar = [Ext.create('com.ad.workflow.SubmitBtn', {
 									_document : me._document,

@@ -25,11 +25,8 @@ Ext.define('com.ad.mq.DefaultGrid', {
 			border : false,
 			grouping : false,
 			msgLabelField : null,
-			emptyText: '没有数据',
-			features : [Ext.create('Ext.ux.grid.FiltersFeature', {
-						encode : true,
-						local : false
-					})],
+			emptyText : '没有数据',
+
 			msgType : {
 				NOM : 0,
 				WRN : 1,
@@ -64,8 +61,11 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				me.input.selectionHook = [];
 
 				Ext.apply(me, _cfg.grid || {});
+				me.features = [Ext.create('Ext.ux.grid.FiltersFeature', {
+							encode : true,
+							local : false
+						})];
 
-				
 				var fields = me.getFieldsCfg(_data);
 				var modelName = 'Model_' + _dataid;
 				Ext.define(modelName, {
@@ -73,7 +73,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 							fields : fields,
 							idProperty : Ext.typeOf(me.idProperty) === 'string' ? me.idProperty : null
 						});
-						
+
 				me.columns = me.getColumnsCfg(_data);
 				var queryActionId = _cfg.grid.select_actionid || 1000;
 
@@ -145,9 +145,9 @@ Ext.define('com.ad.mq.DefaultGrid', {
 					for (var i = 0, len = tbarItemClazz.length; i < len; i++) {
 
 						if (tbarItemClazz[i].constructor === Object) {
-							newObject = Ext.create(tbarItemClazz[i].name, {
-										_grid : me
-									});
+							newObject = Ext.create(tbarItemClazz[i].name, Ext.apply(tbarItemClazz[i]['cfg'] || {}, {
+												_grid : me
+											}));
 							if (tbarItemClazz[i].selectionHook && tbarItemClazz[i].itemId && (!tbarItemClazz[i].auth || (_auth & tbarItemClazz[i].auth === tbarItemClazz[i].auth))) {
 								me.input.selectionHook.push(tbarItemClazz[i].itemId);
 							}
@@ -173,9 +173,9 @@ Ext.define('com.ad.mq.DefaultGrid', {
 					for (var i = 0, len = rbarItemClazz.length; i < len; i++) {
 
 						if (rbarItemClazz[i].constructor === Object) {
-							newObject = Ext.create(rbarItemClazz[i].name, {
-										_grid : me
-									});
+							newObject = Ext.create(rbarItemClazz[i].name, Ext.apply(rbarItemClazz[i]['cfg'] || {}, {
+												_grid : me
+											}));
 							if (rbarItemClazz[i].selectionHook && rbarItemClazz[i].itemId && (!rbarItemClazz[i].auth || (_auth & rbarItemClazz[i].auth === rbarItemClazz[i].auth))) {
 								me.cfg.selectionHook.push(rbarItemClazz[i].itemId);
 							}
@@ -199,9 +199,9 @@ Ext.define('com.ad.mq.DefaultGrid', {
 					for (var i = 0, len = lbarItemClazz.length; i < len; i++) {
 
 						if (lbarItemClazz[i].constructor === Object) {
-							newObject = Ext.create(lbarItemClazz[i].name, {
-										_grid : me
-									});
+							newObject = Ext.create(lbarItemClazz[i].name, Ext.apply(lbarItemClazz[i]['cfg'] || {}, {
+												_grid : me
+											}));
 							if (lbarItemClazz[i].selectionHook && lbarItemClazz[i].itemId && (!lbarItemClazz[i].auth || (_auth & lbarItemClazz[i].auth === lbarItemClazz[i].auth))) {
 								me.input.selectionHook.push(lbarItemClazz[i].itemId);
 							}
@@ -228,9 +228,9 @@ Ext.define('com.ad.mq.DefaultGrid', {
 					for (var i = 0, len = bbarItemClazz.length; i < len; i++) {
 
 						if (bbarItemClazz[i].constructor === Object) {
-							newObject = Ext.create(bbarItemClazz[i].name, {
-										_grid : me
-									});
+							newObject = Ext.create(bbarItemClazz[i].name, Ext.apply(bbarItemClazz[i]['cfg'] || {}, {
+												_grid : me
+											}));
 							if (bbarItemClazz[i].selectionHook && bbarItemClazz[i].itemId && (!bbarItemClazz[i].auth || (_auth & bbarItemClazz[i].auth === bbarItemClazz[i].auth))) {
 								me.input.selectionHook.push(bbarItemClazz[i].itemId);
 							}
@@ -419,6 +419,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 			},
 			doRefresh : function() {
 				this.store.load();
+				this.getSelectionModel().clearSelections();
 			},
 			onAddClick : function() {
 				this.createWindow(this);
@@ -551,8 +552,8 @@ Ext.define('com.ad.mq.DefaultGrid', {
 								text : value.fieldname,
 								eleid : value.id,
 								gridindex : value.gridindex
-//								,
-//								ftype : value.ftype
+								// ,
+								// ftype : value.ftype
 							};
 							if (value.columnattrs) {
 								Ext.apply(column, Ext.JSON.decode(value.columnattrs) || {});

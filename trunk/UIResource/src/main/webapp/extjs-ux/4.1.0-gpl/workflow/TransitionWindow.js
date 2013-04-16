@@ -5,7 +5,7 @@
 Ext.define('com.ad.workflow.TransitionWindow', {
 			extend : 'Ext.window.Window',
 			height : 300,
-			width : 400,
+			width : 600,
 			layout : 'fit',
 			title : '选择去向',
 			shadow : false,

@@ -19,7 +19,7 @@ Ext.define('com.ad.workflow.ShowStepsBtn', {
 			itemId : 'com_ad_workflow_ShowStepsBtn',
 			handler : function() {
 				var me = this;
-				var selection = me._grid.getView().getSelectionModel().getSelection()[0];
+				var selection = me._grid.getSelectionModel().getSelection()[0];
 				if (!selection)
 					return;
 				Ext.create('Ext.window.Window', {
