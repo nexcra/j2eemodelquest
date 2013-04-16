@@ -23,7 +23,7 @@ public class WorkFlowNode implements Serializable {
 	private Integer id;
 	private Integer wfid;
 	private String name;
-	private Integer type;
+	private Integer type;//0:start ,1,node ,2,tasknode ,3,tasknodepool,4,decision,5,fork,6 ,joinn ,9 ,end		
 	private String handler;
 	private String cfg;
 	private Double worktime;

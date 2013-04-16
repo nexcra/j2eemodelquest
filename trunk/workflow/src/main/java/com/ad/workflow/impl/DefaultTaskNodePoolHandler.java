@@ -25,6 +25,9 @@ public class DefaultTaskNodePoolHandler extends NodeHandlerAdapter {
 			String sql = node.getCfg();
 			sql =StringUtils.replaceEachRepeatedly(sql, new String[]{":did",":nid",":sid"}, new String[]{document.getId().toString() , node.getId().toString() ,sid.toString()});
 			Object[] rst = this.db.query2Array(conn ,sql ,new Object[]{});
+			if (null == rst || rst.length ==0){
+				throw new Exception("多人审批节点，没有找到条件审批人！");
+			}
 			node.setUsrid(Integer.parseInt(rst[0].toString()));
 		}
 		
