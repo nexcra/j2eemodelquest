@@ -15,7 +15,10 @@ import com.ad.workflow.model.view.VWorkFlowDocument;
 public class DefaultBackService implements DataBaseAware {
 
 	private DBControl db;
-	private static String SQL = "select * from WORKFLOW$TRANSITION where tonode = ?";
+//	private static String SQL = "select * from WORKFLOW$TRANSITION where tonode = ?";
+	private static String SQL = "select * from WORKFLOW$TRANSITION a ,WORKFLOW$DOCUMENT$STEPS b "
++ " where a.fromnode =b.fromnid    and a.tonode = b.nid "
++ " and b.id = (select max(id) from WORKFLOW$DOCUMENT$STEPS  where nid  =? and id !=?)";
 
 	@Override
 	public void setDBControl(DBControl arg0) {
@@ -27,7 +30,7 @@ public class DefaultBackService implements DataBaseAware {
 		IWorkFlowContext cxt = DefaultWorkFlowContext.getInstance();
 //		Connection conn = this.db.getDataSource().getConnection();
 		VWorkFlowDocument document = cxt.getVWorkFlowDocument(conn, did);
-		List<WorkFlowTransition> transitions = (List<WorkFlowTransition>) this.db.query2BeanList(SQL, WorkFlowTransition.class, new Object[]{nid});
+		List<WorkFlowTransition> transitions = (List<WorkFlowTransition>) this.db.query2BeanList(SQL, WorkFlowTransition.class, new Object[]{nid ,sid});
 		Object transHdl;
 		for(WorkFlowTransition trans : transitions){
 			transHdl = Class.forName(trans.getExecute()).newInstance();

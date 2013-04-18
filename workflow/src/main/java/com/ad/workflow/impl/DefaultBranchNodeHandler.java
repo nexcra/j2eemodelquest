@@ -26,6 +26,7 @@ public class DefaultBranchNodeHandler extends NodeHandlerAdapter {
 			DefaultBackService service = new DefaultBackService();
 			service.setDBControl(this.db);
 			service.back(conn ,document.getId(), curtStep.getNid(), curtStep.getId(), usr, null);
+			super.back(node, null, document, conn, curtStep.getId(), usr, null);
 		} else { // 提交
 			Integer transitionId = 0;
 
@@ -37,6 +38,11 @@ public class DefaultBranchNodeHandler extends NodeHandlerAdapter {
 		}
 
 		return curtStep;
+	}
+
+	@Override
+	public void back(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr, String msg) throws Exception {
+		return ;
 	}
 
 	public Integer getTransitionId(Connection conn ,VWorkFlowDocument document, WorkFlowDocumentStep step, String cfg) throws Exception {
@@ -55,7 +61,6 @@ public class DefaultBranchNodeHandler extends NodeHandlerAdapter {
 		IValueHandler hanlder = (IValueHandler) Class.forName(handlerName).newInstance();
 		hanlder.setDBCtl(this.db);
 		String returnVal = invoke.invokeFunction("getBranchId", hanlder.getValue(conn ,document, step, outCfg)).toString();
-		System.out.println(returnVal);
 		transitionId = Integer.parseInt(returnVal);
 
 		return transitionId;
