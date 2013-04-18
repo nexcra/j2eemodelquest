@@ -31,6 +31,7 @@ Ext.define('com.ad.workflow.SubmitBtn', {
 							if (Ext.type(o.beforeSubmit) === 'function') {
 								ok = o.beforeSubmit();
 							}
+							if (!ok)return false;
 
 						});
 				if (!ok)

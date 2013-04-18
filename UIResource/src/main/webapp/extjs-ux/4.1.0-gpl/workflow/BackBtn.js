@@ -28,7 +28,8 @@ Ext.define('com.ad.workflow.BackBtn', {
 							if (Ext.type(o.beforeBack) === 'function') {
 								ok = o.beforeBack();
 							}
-
+							if (!ok)return false;
+							
 						});
 				if (!ok)
 					return;

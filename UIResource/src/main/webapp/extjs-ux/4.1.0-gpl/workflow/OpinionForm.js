@@ -31,6 +31,7 @@ Ext.define('com.ad.workflow.OpinionForm', {
 							xtype : 'textarea',
 							name : 'msg',
 							itemId : 'msg',
+							allowBlank : me.allowBlank,
 							value : me._document.msg
 							
 						}];
@@ -38,8 +39,13 @@ Ext.define('com.ad.workflow.OpinionForm', {
 			},
 			beforeSubmit:function(){
 				var me = this;
+				if (me.isDirty()){
+					Ext.Msg.alert('提醒','请先保存意见！');
+					return false;
+				}
 				if (Ext.isEmpty(me.allowBlank))
 					return true;
+				
 				if (!me.allowBlank && Ext.isEmpty(me.down('#msg').getValue())){	
 					Ext.Msg.alert('提醒','请填写意见！');
 					return false;
