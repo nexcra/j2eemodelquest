@@ -4,17 +4,10 @@
 // 工作流申请的form
 Ext.define('com.ad.workflow.OpinionForm', {
 			extend : 'Ext.form.Panel',
-			bodyStyle : 'padding:5px 5px 0',
+			// bodyStyle : 'padding:0 0 0 0',
 			autoScroll : true,
 			layout : 'fit',
 			border : 0,
-			// fieldDefaults : {
-			// labelAlign : 'right',
-			// height : 25,
-			// labelWidth : 90,
-			// anchor : '100%',
-			// msgTarget : 'side'
-			// },
 			config : {
 				_document : null,
 				_view : null
@@ -32,40 +25,65 @@ Ext.define('com.ad.workflow.OpinionForm', {
 							name : 'msg',
 							itemId : 'msg',
 							allowBlank : me.allowBlank,
-							value : me._document.msg
-							
+							value : me._document.msg,
+							originalValue : me._document.msg
 						}];
+
 				me.callParent();
 			},
-			beforeSubmit:function(){
+			beforeSubmit : function() {
 				var me = this;
-				if (me.isDirty()){
-					Ext.Msg.alert('提醒','请先保存意见！');
+				var msgField = me.down('#msg');
+				if (msgField.originalValue !== msgField.getValue()) {
+					Ext.Msg.alert('提醒', '请先保存意见！');
 					return false;
 				}
 				if (Ext.isEmpty(me.allowBlank))
 					return true;
-				
-				if (!me.allowBlank && Ext.isEmpty(me.down('#msg').getValue())){	
-					Ext.Msg.alert('提醒','请填写意见！');
+
+				if (!me.allowBlank && Ext.isEmpty(msgField.getValue())) {
+					Ext.Msg.alert('提醒', '请填写意见！');
 					return false;
 				}
 				return true;
 			},
+
 			buttons : [{
 						text : '保存',
+						type : 'submit',
 						handler : function() {
-							var form = this.up('form');
-							
-							com.ad.ajax({
+
+							var _form = this.up('form');
+							var msgField = _form.down('#msg');
+							var stepId = _form._document.stepid;
+							if (!_form.isValid())
+								return;
+							_form.getForm().submit({
+										url : 'mq',
 										params : {
 											$actionid : 202,
-											sid : form._document.stepid,
-											msg : form.down('#msg').getValue()
+											sid : stepId,
+											msg : msgField.getValue()
 										},
-										callback : function(input) {
-											if (input && input.message){
-												window.alert(input.message);
+										success : function(form, action) {
+											if (!action.result.session) {
+												Ext.Msg.alert('警告', '登录信息过期 ，请重新登录 ！');
+												return;
+											}
+											if (action.result.message)
+												Ext.Msg.alert('提示', action.result.message);
+											msgField.originalValue = msgField.getValue();
+										},
+										failure : function(form, action) {
+											switch (action.failureType) {
+												case Ext.form.action.Action.CLIENT_INVALID :
+													Ext.Msg.alert('错误', '请先填写意见内容！');
+													break;
+												case Ext.form.action.Action.CONNECT_FAILURE :
+													Ext.Msg.alert('错误', '操作失败!');
+													break;
+												case Ext.form.action.Action.SERVER_INVALID :
+													Ext.Msg.alert('错误', action.result.message);
 											}
 										}
 									});
