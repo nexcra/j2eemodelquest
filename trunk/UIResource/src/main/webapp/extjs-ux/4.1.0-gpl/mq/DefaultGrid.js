@@ -56,6 +56,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				var _dataid = me.input.dataid;
 				var _auth = me.input.auth;
 				var _data = me.input.data;
+				
 				if (_auth === -1)
 					_auth = 0;
 				me.input.selectionHook = [];
@@ -102,13 +103,15 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				var store = Ext.create('App.store.JsonStore', storeCfg);
 				me.store = store;
 
-				var tbarItems = [{
-							iconCls : Ext.baseCSSPrefix + 'tbar-loading',
-							tooltip : '刷新[' + _dataid + ']',
-							scope : me,
-							itemId : '_grid_refersh',
-							handler : me.doRefresh
-						}];
+				var tbarItems = [];
+				
+//				{
+//							iconCls : Ext.baseCSSPrefix + 'tbar-loading',
+//							tooltip : '刷新[' + _dataid + ']',
+//							scope : me,
+//							itemId : '_grid_refersh',
+//							handler : me.doRefresh
+//						}
 
 				if ((_auth & 1) === 1) {
 					tbarItems.push({
@@ -246,7 +249,8 @@ Ext.define('com.ad.mq.DefaultGrid', {
 							dock : 'bottom',
 							store : store,
 							items : bbarItems,
-							displayInfo : true
+							displayInfo : true,
+							refreshText :'刷新[' + _dataid + ']'
 						});
 
 				me.getSelectionModel().on('selectionchange', me.onSelectChange, me);
