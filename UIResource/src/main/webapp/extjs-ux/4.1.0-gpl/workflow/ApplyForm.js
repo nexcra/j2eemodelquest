@@ -66,24 +66,24 @@ Ext.define('com.ad.workflow.ApplyForm', {
 						handler : function() {
 							var wf = this.up('form').down('#workflow');
 							Ext.Msg.confirm('业务申请', '确定要申请\"' + wf.getRawValue() + '[' + wf.getValue() + ']\"流程？', function(opt) {
-										if (opt == 'no')
-											return;
-										com.ad.ajax({
-													params : {
-														$actionid : 200,
-														wfid : wf.getValue()
-													},
-													callback : function(input) {
-														if (input.message) {
-															Ext.Msg.alert('警告', input.message);
-														} else {
-															Ext.create('com.ad.workflow.ApproveWindow', {
-																		_document : input.data
-																	}).show();
-														}
+										if (opt == 'yes') {
+											com.ad.ajax({
+														params : {
+															$actionid : 200,
+															wfid : wf.getValue()
+														},
+														callback : function(input) {
+															if (input.message) {
+																Ext.Msg.alert('警告', input.message);
+															} else {
+																Ext.create('com.ad.workflow.ApproveWindow', {
+																			_document : input.data
+																		}).show();
+															}
 
-													}
-												});
+														}
+													});
+										}
 									});
 
 						}
