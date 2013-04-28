@@ -19,10 +19,28 @@ public class DefaultWorkFlowService implements IWorkFlow {
 
 	private DBControl db;
 
-	private String SQL = "SELECT a.id," + "a.wfid," + "a.usrid," + "a.createtime," + "a.endtime," + "a.status," + "b.name wfname," + "c.id AS nid," + "c.name nodename," + "d.USERNAME usrname,"
-			+ "c.TYPE nodetype," + "e.enterdate," + "e.submitdate," + "e.backdate," + "e.status stepstatus," + "e.msg," + "e.id AS stepid " + "FROM WORKFLOW$DOCUMENT a," + "workflow b,"
-			+ "workflow$node c," + "usertable d," + "workflow$document$steps e " + "WHERE     a.wfid = b.id " + " AND a.usrid = d.userid " + " AND A.ID = e.did " + "AND c.id = e.nid "
-			+ "AND e.status = 0 " + "AND a.id =?";
+	private String SQL = "SELECT a.ID, a.WFID, a.CREATETIME, a.ENDTIME, a.STATUS, "
+									+ "       b.name wfname,"
+									+ "      c.name nodename,"
+									+ "      d.USERNAME usrname,"
+									+ "      c.TYPE nodetype,"
+									+ "      e.id AS stepid,"
+									+ "      e.enterdate,"
+									+ "       e.msg,"
+									+ "       e.NID, "
+									+ "       e.USRID"
+									+ " FROM WORKFLOW$DOCUMENT a,"
+									+ "      workflow b,"
+									+ "      workflow$node c,"
+									+ "       usertable d,"
+									+ "       workflow$document$steps e"
+									+ " WHERE     a.wfid = b.id       "
+									+ "       AND a.id = e.did"
+									+ "       AND e.nid = c.id"
+									+ "       AND e.status = 0"
+									+ "      AND a.status = 1"
+									+ "      AND e.usrid = d.userid"
+									+ "       AND a.ENDTIME IS NULL AND a.id=?";
 
 	public void setDb(DBControl db) {
 		this.db = db;
@@ -39,17 +57,17 @@ public class DefaultWorkFlowService implements IWorkFlow {
 		WorkFlowDocument doc = new WorkFlowDocument();
 		VWorkFlowDocument document = new VWorkFlowDocument();
 
-		doc.setUsrid(usr.getUserId());
+		//doc.setUsrid(usr.getUserId());
 		doc.setCreatetime(new Timestamp(System.currentTimeMillis()));
 		doc.setWfid(wfid);
 		doc.setStatus(true);
-		doc.setNid(node.getId());
+		//doc.setNid(node.getId());
 
-		document.setUsrid(doc.getUsrid());
+		//document.setUsrid(doc.getUsrid());
 		document.setCreatetime(doc.getCreatetime());
 		document.setWfid(doc.getWfid());
 		document.setStatus(doc.getStatus());
-		document.setNid(node.getId());
+		//document.setNid(node.getId());
 
 		Object nodeHandler = Class.forName(node.getHandler()).newInstance();
 		if (nodeHandler instanceof DataBaseAware) {
