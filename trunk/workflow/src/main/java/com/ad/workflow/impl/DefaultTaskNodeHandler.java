@@ -33,7 +33,7 @@ public class DefaultTaskNodeHandler extends NodeHandlerAdapter {
 		if (null == node.getUsrid()) {
 			throw new Exception("TaskNode节点需要指定一个usrid");
 		}
-		this.db.update(conn, "update WORKFLOW$DOCUMENT set usrid = ? ,nid = ? where id =?", new Object[] { node.getUsrid(), node.getId(), document.getId() });
+		//this.db.update(conn, "update WORKFLOW$DOCUMENT set usrid = ? ,nid = ? where id =?", new Object[] { node.getUsrid(), node.getId(), document.getId() });
 		// WorkFlowDocumentStep step = new WorkFlowDocumentStep();
 		// step.setDid(document.getId());
 		// step.setEnterdate(new Timestamp(System.currentTimeMillis()));

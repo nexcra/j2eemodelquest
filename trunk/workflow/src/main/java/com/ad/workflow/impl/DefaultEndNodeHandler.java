@@ -24,7 +24,7 @@ public class DefaultEndNodeHandler extends NodeHandlerAdapter {
 		if (log.isDebugEnabled()) {
 			log.debug("enter invoke!");
 		}
-		this.db.update(conn, "update WORKFLOW$DOCUMENT set nid = ?, ENDTIME = ? where id =?", new Object[] { node.getId(),new Timestamp(System.currentTimeMillis()), document.getId() });
+		this.db.update(conn, "update WORKFLOW$DOCUMENT set ENDTIME = ? where id =?", new Object[] { new Timestamp(System.currentTimeMillis()), document.getId() });
 //		WorkFlowDocumentStep step = new WorkFlowDocumentStep();
 //		step.setDid(document.getId());
 //		step.setEnterdate(new Timestamp(System.currentTimeMillis()));
