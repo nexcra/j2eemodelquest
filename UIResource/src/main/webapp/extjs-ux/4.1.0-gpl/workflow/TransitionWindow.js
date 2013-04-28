@@ -38,7 +38,11 @@ Ext.define('com.ad.workflow.TransitionWindow', {
 						handler : function() {
 							var window = this.up('window');
 							var grid = this.up('window').down('panel').down('panel');
-							var transition = grid.getView().getSelectionModel().getSelection()[0];
+							var selections =grid.getSelectionModel().getSelection();
+							if (Ext.isEmpty(selections)){
+								grid.getSelectionModel().select(0);
+							}
+							var transition = grid.getSelectionModel().getSelection()[0];
 							if (!transition)
 								return;
 							Ext.Msg.confirm('提醒', '确定要提交当前案件至下一节点 ？', function(opt) {
