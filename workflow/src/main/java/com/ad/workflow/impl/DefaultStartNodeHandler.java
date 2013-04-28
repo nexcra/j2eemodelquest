@@ -21,7 +21,7 @@ public class DefaultStartNodeHandler extends NodeHandlerAdapter {
 		if (log.isDebugEnabled()) {
 			log.debug("enter invoke!");
 		}
-		this.db.update(conn, "update WORKFLOW$DOCUMENT set usrid = ? ,nid =? where id =?", new Object[] { usr.getUserId(), node.getId() ,document.getId() });
+		//this.db.update(conn, "update WORKFLOW$DOCUMENT set usrid = ? ,nid =? where id =?", new Object[] { usr.getUserId(), node.getId() ,document.getId() });
 //		WorkFlowDocumentStep step = new WorkFlowDocumentStep();
 //		step.setDid(document.getId());
 //		step.setEnterdate(new Timestamp(System.currentTimeMillis()));

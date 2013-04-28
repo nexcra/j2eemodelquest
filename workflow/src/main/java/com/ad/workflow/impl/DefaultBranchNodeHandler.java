@@ -20,7 +20,7 @@ public class DefaultBranchNodeHandler extends NodeHandlerAdapter {
 	public WorkFlowDocumentStep enter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
 		WorkFlowDocumentStep curtStep = super.enter(fromnode, node, document, conn, sid, usr);// 当前步骤编号
 
-		this.db.update(conn, "update WORKFLOW$DOCUMENT set usrid = ? ,nid = ? where id =?", new Object[] { node.getUsrid(), node.getId(), document.getId() });
+		//this.db.update(conn, "update WORKFLOW$DOCUMENT set usrid = ? ,nid = ? where id =?", new Object[] { node.getUsrid(), node.getId(), document.getId() });
 		
 		if (curtStep.getNid() < curtStep.getFromnid()) { // 回退
 			DefaultBackService service = new DefaultBackService();
