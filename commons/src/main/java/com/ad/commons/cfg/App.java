@@ -3,7 +3,7 @@ package com.ad.commons.cfg;
 /**
  * Application 全局定义
  * 
- * @author Administrator
+ * @author YMQ
  * 
  */
 public interface App {
