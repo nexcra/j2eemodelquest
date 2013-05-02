@@ -56,7 +56,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				var _dataid = me.input.dataid;
 				var _auth = me.input.auth;
 				var _data = me.input.data;
-				
+
 				if (_auth === -1)
 					_auth = 0;
 				me.input.selectionHook = [];
@@ -104,14 +104,14 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				me.store = store;
 
 				var tbarItems = [];
-				
-//				{
-//							iconCls : Ext.baseCSSPrefix + 'tbar-loading',
-//							tooltip : '刷新[' + _dataid + ']',
-//							scope : me,
-//							itemId : '_grid_refersh',
-//							handler : me.doRefresh
-//						}
+
+				// {
+				// iconCls : Ext.baseCSSPrefix + 'tbar-loading',
+				// tooltip : '刷新[' + _dataid + ']',
+				// scope : me,
+				// itemId : '_grid_refersh',
+				// handler : me.doRefresh
+				// }
 
 				if ((_auth & 1) === 1) {
 					tbarItems.push({
@@ -250,7 +250,12 @@ Ext.define('com.ad.mq.DefaultGrid', {
 							store : store,
 							items : bbarItems,
 							displayInfo : true,
-							refreshText :'刷新[' + _dataid + ']'
+							refreshText : '刷新[' + _dataid + ']',
+							listeners : {
+								beforechange : function( __this ,page ,eOpts) {
+									me.getSelectionModel().clearSelections();
+								}
+							}
 						});
 
 				me.getSelectionModel().on('selectionchange', me.onSelectChange, me);
@@ -421,10 +426,10 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				}
 
 			},
-			doRefresh : function() {
-				this.store.load();
-				this.getSelectionModel().clearSelections();
-			},
+			// doRefresh : function() {
+			// this.store.load();
+			// this.getSelectionModel().clearSelections();
+			// },
 			onAddClick : function() {
 				this.createWindow(this);
 			},
