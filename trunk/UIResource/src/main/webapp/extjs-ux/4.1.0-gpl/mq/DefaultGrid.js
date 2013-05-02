@@ -426,10 +426,10 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				}
 
 			},
-			// doRefresh : function() {
-			// this.store.load();
-			// this.getSelectionModel().clearSelections();
-			// },
+			 doRefresh : function() {
+				this.store.load();
+				this.getSelectionModel().clearSelections();
+			},
 			onAddClick : function() {
 				this.createWindow(this);
 			},
