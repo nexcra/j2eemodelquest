@@ -13,13 +13,14 @@ Ext.onReady(function() {
 								params : config.params,
 								method : 'post',
 								success : function(response, options) {
+									wait.close();
 									var json = Ext.JSON.decode(response.responseText || '{}');
 									if (config.callback && json && json.session) {
 										config.callback(json);
 									} else {
 										Ext.create('App.login.LoginWindow').show();
 									}
-									wait.close();
+									
 								},
 								failure : function(response, options) {
 									wait.close();
