@@ -70,6 +70,10 @@ Ext.define('com.ad.workflow.OpinionForm', {
 												Ext.Msg.alert('警告', '登录信息过期 ，请重新登录 ！');
 												return;
 											}
+											if(action.result.success)
+											{
+											    Ext.Msg.alert('提示', '保存成功！');
+											}
 											if (action.result.message)
 												Ext.Msg.alert('提示', action.result.message);
 											msgField.originalValue = msgField.getValue();
