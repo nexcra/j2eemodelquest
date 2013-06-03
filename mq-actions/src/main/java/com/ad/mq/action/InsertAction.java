@@ -1,5 +1,6 @@
 package com.ad.mq.action;
 
+import java.sql.Connection;
 import java.util.Map;
 import com.ad.mq.model.OutData;
 
@@ -16,6 +17,19 @@ public class InsertAction extends AbstractBaseAction {
 		OutData data = new OutData();
 		data.setData(this.doInsert(this.$dataid));
 		this.out = data;
+	}
+	
+	public void execute(Connection conn) throws Exception {
+		OutData data = new OutData();
+		data.setData(this.doInsert(conn ,this.$dataid));
+		this.out = data;
+	}
+
+
+	protected Map<String, Object> doInsert(Connection conn, Integer $dataid) throws Exception{
+		Class<?> clzz = this.getEntityClass(conn ,$dataid);
+		Object object = this.getObject(clzz);
+		return this.insert(conn ,object);
 	}
 
 	protected Map<String, Object> doInsert(Integer did) throws Exception {
