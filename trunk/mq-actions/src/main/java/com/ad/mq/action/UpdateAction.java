@@ -1,4 +1,6 @@
 package com.ad.mq.action;
+import java.sql.Connection;
+
 import com.ad.mq.model.OutData;
 
 /**
@@ -15,6 +17,18 @@ public class UpdateAction extends AbstractBaseAction {
 		OutData data = new OutData();
 		data.setData(this.doUpdate(this.$dataid));
 		this.out = data;
+	}
+	
+	protected void execute(Connection conn) throws Exception{
+		OutData data = new OutData();
+		data.setData(this.doUpdate(conn ,this.$dataid));
+		this.out = data;
+	}
+
+	protected Integer doUpdate(Connection conn, Integer $dataid) throws Exception  {
+		Class<?> clzz = this.getEntityClass(conn ,$dataid);
+		Object object = this.getObject(clzz);
+		return this.update(conn ,object,this.request);
 	}
 
 	/**
