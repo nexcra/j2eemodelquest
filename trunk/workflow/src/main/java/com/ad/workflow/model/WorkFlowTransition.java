@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 
 /**
  * 工作流扭转
@@ -26,7 +27,15 @@ public class WorkFlowTransition implements Serializable {
 	protected String description;
 	protected String execute;
 	protected Integer transtype;//1,pull ,2,push
+	@Transient
+	protected Integer usrid;
 	
+	public Integer getUsrid() {
+		return usrid;
+	}
+	public void setUsrid(Integer usrid) {
+		this.usrid = usrid;
+	}
 	public Integer getTranstype() {
 		return transtype;
 	}

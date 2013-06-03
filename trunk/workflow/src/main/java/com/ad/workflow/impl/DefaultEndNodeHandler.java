@@ -20,7 +20,7 @@ public class DefaultEndNodeHandler extends NodeHandlerAdapter {
 	private Logger log = Logger.getLogger(DefaultEndNodeHandler.class);
 
 	@Override
-	public WorkFlowDocumentStep enter(Integer  fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
+	public WorkFlowDocumentStep enter(Integer  fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,Integer usrid) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("enter invoke!");
 		}
@@ -35,7 +35,7 @@ public class DefaultEndNodeHandler extends NodeHandlerAdapter {
 //		step.setFromsid(sid);
 //		this.db.insert(conn, step);
 		
-		return super.enter(fromnode, node, document, conn, sid, usr);
+		return super.enter(fromnode, node, document, conn, sid, usrid);
 	}
 
 

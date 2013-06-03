@@ -12,6 +12,6 @@ import com.ad.workflow.model.view.VWorkFlowDocument;
  *
  */
 public interface ITransitionHandler {
-	void transGo(Connection conn , VWorkFlowDocument document ,WorkFlowTransition transition,Integer sid ,IUser usr) throws Exception;
-	void transBack(Connection conn , VWorkFlowDocument document ,WorkFlowTransition transition,Integer sid ,IUser usr,String msg) throws Exception;
+	void transGo(Connection conn , VWorkFlowDocument document ,WorkFlowTransition transition,Integer sid ,Integer usrid) throws Exception;
+	void transBack(Connection conn , VWorkFlowDocument document ,WorkFlowTransition transition,Integer sid ,Integer usrid,String msg) throws Exception;
 }

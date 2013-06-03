@@ -66,7 +66,7 @@ public class BackAction extends ActionSupport implements DataBaseAware, SessionA
 		try {
 			conn = this.db.getDataSource().getConnection();
 			conn.setAutoCommit(false);
-			service.back(conn ,did, nid, sid, usr, msg);
+			service.back(conn ,did, nid, sid, usr.getUserId(), msg ,1);
 			conn.commit();
 		} catch (Exception ex) {
 			conn.rollback();
