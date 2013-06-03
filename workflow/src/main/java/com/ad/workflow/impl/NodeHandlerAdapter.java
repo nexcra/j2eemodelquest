@@ -25,14 +25,14 @@ public abstract class NodeHandlerAdapter implements INodeHandler, DataBaseAware 
 	}
 
 	@Override
-	public void beforeEnter(Integer  fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
+	public void beforeEnter(Integer  fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,Integer usrId) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("beforeEnter invoke!");
 		}
 	};
 
 	@Override
-	public WorkFlowDocumentStep enter(Integer  fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
+	public WorkFlowDocumentStep enter(Integer  fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,Integer usrId) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("enter invoke!");
 		}
@@ -45,7 +45,7 @@ public abstract class NodeHandlerAdapter implements INodeHandler, DataBaseAware 
 		step.setDid(document.getId());
 		step.setEnterdate(new Timestamp(System.currentTimeMillis()));
 		step.setNid(node.getId());
-		step.setUsrid((node.getType()==0 && node.getUsrid()==null)?usr.getUserId():node.getUsrid());
+		step.setUsrid((node.getType()==0 && node.getUsrid()==null)?usrId:node.getUsrid());
 		step.setStatus(IWorkFlow.STEP_WORKING);
 		step.setFromnid(fromnode);
 		step.setFromsid(sid);
@@ -56,14 +56,14 @@ public abstract class NodeHandlerAdapter implements INodeHandler, DataBaseAware 
 	};
 
 	@Override
-	public void beforeSubmit(WorkFlowNode node, Integer  tonid, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
+	public void beforeSubmit(WorkFlowNode node, Integer  tonid, VWorkFlowDocument document, Connection conn, Integer sid ,Integer usrId) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("beforeSubmit invoke!");
 		}
 	};
 
 	@Override
-	public void submit(WorkFlowNode node, Integer  tonid, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
+	public void submit(WorkFlowNode node, Integer  tonid, VWorkFlowDocument document, Connection conn, Integer sid ,Integer usrId) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("submit invoke!");
 		}
@@ -82,14 +82,14 @@ public abstract class NodeHandlerAdapter implements INodeHandler, DataBaseAware 
 	};
 
 	@Override
-	public void beforeBack(WorkFlowNode node,Integer  tonid, VWorkFlowDocument document, Connection conn, Integer sid,IUser usr,String msg) throws Exception {
+	public void beforeBack(WorkFlowNode node,Integer  tonid, VWorkFlowDocument document, Connection conn, Integer sid,Integer usrId,String msg) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("beforeBack invoke!");
 		}
 	};
 
 	@Override
-	public void back(WorkFlowNode node,Integer  tonid,VWorkFlowDocument document, Connection conn, Integer sid,IUser usr,String msg) throws Exception {
+	public void back(WorkFlowNode node,Integer  tonid,VWorkFlowDocument document, Connection conn, Integer sid,Integer usrId,String msg) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("back invoke!");
 		}
@@ -108,14 +108,14 @@ public abstract class NodeHandlerAdapter implements INodeHandler, DataBaseAware 
 	};
 
 	@Override
-	public void beforeSuspend(WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid,IUser usr) throws Exception {
+	public void beforeSuspend(WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid,Integer usrId) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("beforeSuspend invoke!");
 		}
 	};
 
 	@Override
-	public void suspend(WorkFlowNode node, VWorkFlowDocument document, Connection conn,Integer sid, IUser usr) throws Exception {
+	public void suspend(WorkFlowNode node, VWorkFlowDocument document, Connection conn,Integer sid, Integer usrId) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("suspend invoke!");
 		}

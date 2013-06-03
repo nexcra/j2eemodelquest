@@ -20,7 +20,7 @@ public class DefaultSubmitService implements DataBaseAware {
 		this.db = arg0;
 	}
 
-	public void submit(Connection conn ,Integer did, Integer tid ,Integer sid, IUser usr) throws Exception {
+	public void submit(Connection conn ,Integer did, Integer tid ,Integer sid, Integer usrid) throws Exception {
 		IWorkFlowContext cxt = DefaultWorkFlowContext.getInstance();
 		WorkFlowTransition transition = cxt.getWorkFlowTransition(conn, tid);
 		VWorkFlowDocument document = cxt.getVWorkFlowDocument(conn, did);
@@ -29,7 +29,7 @@ public class DefaultSubmitService implements DataBaseAware {
 			((DataBaseAware) trans).setDBControl(this.db);
 		}
 		if (trans instanceof ITransitionHandler){
-			((ITransitionHandler) trans).transGo(conn, document, transition ,sid, usr);
+			((ITransitionHandler) trans).transGo(conn, document, transition ,sid, usrid);
 		}else{
 			throw new Exception(transition.getExecute() + "不是ITransitionHandler接口的实现类！");
 		}

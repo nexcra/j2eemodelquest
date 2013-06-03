@@ -28,7 +28,7 @@ public class DefaultTransitionHandler implements ITransitionHandler, DataBaseAwa
 	 * @param usr
 	 * @throws Exception
 	 */
-	protected void submitNode(Connection conn, VWorkFlowDocument document, Integer fromnid, Integer tonid, Integer sid, IUser usr) throws Exception {
+	protected void submitNode(Connection conn, VWorkFlowDocument document, Integer fromnid, Integer tonid, Integer sid, Integer usrid) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("enterToNode invoke");
 		}
@@ -39,8 +39,8 @@ public class DefaultTransitionHandler implements ITransitionHandler, DataBaseAwa
 			((DataBaseAware) nodeHandler).setDBControl(this.db);
 		}
 		if (nodeHandler instanceof INodeHandler) {
-			((INodeHandler) nodeHandler).beforeSubmit(fromnode, tonid, document, conn, sid, usr);
-			((INodeHandler) nodeHandler).submit(fromnode, tonid, document, conn, sid, usr);
+			((INodeHandler) nodeHandler).beforeSubmit(fromnode, tonid, document, conn, sid, usrid);
+			((INodeHandler) nodeHandler).submit(fromnode, tonid, document, conn, sid, usrid);
 		} else {
 			throw new Exception(fromnode.getHandler() + "不是INodeHandler接口的实现类！");
 		}
@@ -55,18 +55,21 @@ public class DefaultTransitionHandler implements ITransitionHandler, DataBaseAwa
 	 * @param usr
 	 * @throws Exception
 	 */
-	protected void enterNode(Connection conn, VWorkFlowDocument document, Integer fromnid, Integer tonid, Integer sid,IUser usr) throws Exception {
+	protected void enterNode(Connection conn, VWorkFlowDocument document, Integer fromnid, Integer tonid, Integer sid,Integer usrid) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("enterToNode invoke");
 		}
 		WorkFlowNode tonode = cxt.getWorkFlowNode(conn, tonid);
+		if (fromnid > tonid){
+			tonode.setUsrid(usrid);
+		}
 		Object nodeHandler = Class.forName(tonode.getHandler()).newInstance();
 		if (nodeHandler instanceof DataBaseAware) {
 			((DataBaseAware) nodeHandler).setDBControl(this.db);
 		}
 		if (nodeHandler instanceof INodeHandler) {
-			((INodeHandler) nodeHandler).beforeEnter(fromnid, tonode, document, conn, sid,usr);
-			((INodeHandler) nodeHandler).enter(fromnid, tonode, document, conn, sid,usr);
+			((INodeHandler) nodeHandler).beforeEnter(fromnid, tonode, document, conn, sid,usrid);
+			((INodeHandler) nodeHandler).enter(fromnid, tonode, document, conn, sid,usrid);
 		} else {
 			throw new Exception(tonode.getHandler() + "不是INodeHandler接口的实现类！");
 		}
@@ -82,7 +85,7 @@ public class DefaultTransitionHandler implements ITransitionHandler, DataBaseAwa
 	 * @param usr
 	 * @throws Exception
 	 */
-	protected void backNode(Connection conn, VWorkFlowDocument document, Integer fromnid, Integer tonid, Integer sid, IUser usr,String msg) throws Exception {
+	protected void backNode(Connection conn, VWorkFlowDocument document, Integer fromnid, Integer tonid, Integer sid, Integer usrid,String msg) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("enterToNode invoke");
 		}
@@ -92,21 +95,21 @@ public class DefaultTransitionHandler implements ITransitionHandler, DataBaseAwa
 			((DataBaseAware) nodeHandler).setDBControl(this.db);
 		}
 		if (nodeHandler instanceof INodeHandler) {
-			((INodeHandler) nodeHandler).beforeBack(node, tonid, document, conn, sid, usr ,msg);
-			((INodeHandler) nodeHandler).back(node, tonid, document, conn, sid, usr ,msg);
+			((INodeHandler) nodeHandler).beforeBack(node, tonid, document, conn, sid, usrid ,msg);
+			((INodeHandler) nodeHandler).back(node, tonid, document, conn, sid, usrid ,msg);
 		} else {
 			throw new Exception(node.getHandler() + "不是INodeHandler接口的实现类！");
 		}
 	}
 
 	@Override
-	public void transGo(Connection conn, VWorkFlowDocument document, WorkFlowTransition transition, Integer sid, IUser usr) throws Exception {
+	public void transGo(Connection conn, VWorkFlowDocument document, WorkFlowTransition transition, Integer sid, Integer usrid) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("trans invoke");
 		}
 
-		submitNode(conn, document, transition.getFromnode(), transition.getTonode(), sid, usr);
-		enterNode(conn, document, transition.getFromnode(), transition.getTonode(), sid, usr);
+		submitNode(conn, document, transition.getFromnode(), transition.getTonode(), sid, usrid);
+		enterNode(conn, document, transition.getFromnode(), transition.getTonode(), sid, usrid);
 	}
 
 	@Override
@@ -115,9 +118,9 @@ public class DefaultTransitionHandler implements ITransitionHandler, DataBaseAwa
 	}
 
 	@Override
-	public void transBack(Connection conn, VWorkFlowDocument document, WorkFlowTransition transition, Integer sid, IUser usr ,String msg) throws Exception {
-		backNode(conn, document, transition.getTonode(), transition.getFromnode(), sid, usr ,msg);
-		enterNode(conn, document, transition.getTonode(), transition.getFromnode(), sid, usr);
+	public void transBack(Connection conn, VWorkFlowDocument document, WorkFlowTransition transition, Integer sid, Integer usrid ,String msg) throws Exception {
+		backNode(conn, document, transition.getTonode(), transition.getFromnode(), sid, transition.getUsrid() ,msg);
+		enterNode(conn, document, transition.getTonode(), transition.getFromnode(), sid, transition.getUsrid());
 
 	}
 

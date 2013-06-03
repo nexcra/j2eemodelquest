@@ -19,14 +19,14 @@ public class DefaultTaskNodeHandler extends NodeHandlerAdapter {
 	private Logger log = Logger.getLogger(DefaultTaskNodeHandler.class);
 
 	@Override
-	public void beforeEnter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
+	public void beforeEnter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, Integer usrid) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("beforeEnter invoke!");
 		}
 	}
 
 	@Override
-	public WorkFlowDocumentStep enter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
+	public WorkFlowDocumentStep enter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid,Integer usrid ) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("enter invoke!");
 		}
@@ -43,45 +43,45 @@ public class DefaultTaskNodeHandler extends NodeHandlerAdapter {
 		// step.setFromnid(fromnode);
 		// step.setFromsid(sid);
 		// this.db.insert(conn, step);
-		return super.enter(fromnode, node, document, conn, sid, usr);
+		return super.enter(fromnode, node, document, conn, sid, usrid);
 	}
 
 	@Override
-	public void beforeSubmit(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
+	public void beforeSubmit(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, Integer usrid) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("beforeSubmit invoke!");
 		}
 	}
 
 	@Override
-	public void submit(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
+	public void submit(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, Integer usrid) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("submit invoke!");
 		}
-		super.submit(node, tonid, document, conn, sid, usr);
+		super.submit(node, tonid, document, conn, sid, usrid);
 	}
 
 	@Override
-	public void beforeBack(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr, String msg) throws Exception {
+	public void beforeBack(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, Integer usrid, String msg) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("beforeBack invoke!");
 		}
 	}
 
 	@Override
-	public void back(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr, String msg) throws Exception {
-		super.back(node, tonid, document, conn, sid, usr, msg);
+	public void back(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid,Integer usrid, String msg) throws Exception {
+		super.back(node, tonid, document, conn, sid, usrid, msg);
 	}
 
 	@Override
-	public void beforeSuspend(WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
+	public void beforeSuspend(WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, Integer usrid) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("beforeSuspend invoke!");
 		}
 	}
 
 	@Override
-	public void suspend(WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
+	public void suspend(WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, Integer usrid) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("suspend invoke!");
 		}

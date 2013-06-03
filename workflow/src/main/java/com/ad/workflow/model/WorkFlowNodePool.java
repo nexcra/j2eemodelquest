@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 /**
  * 工作流节点审批人员
@@ -18,6 +19,18 @@ public class WorkFlowNodePool implements Serializable {
 	private Integer nid;
 	@Id
 	private Integer usrid;
+	@Transient
+	private String usrName;
+	
+	
+	
+	public String getUsrName() {
+		return usrName;
+	}
+
+	public void setUsrName(String usrName) {
+		this.usrName = usrName;
+	}
 
 	public Integer getNid() {
 		return nid;

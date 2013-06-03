@@ -6,7 +6,6 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
-import com.ad.mq.model.IUser;
 import com.ad.workflow.IValueHandler;
 import com.ad.workflow.model.WorkFlowDocumentStep;
 import com.ad.workflow.model.WorkFlowNode;
@@ -17,23 +16,23 @@ import com.ad.workflow.service.DefaultSubmitService;
 public class DefaultBranchNodeHandler extends NodeHandlerAdapter {
 
 	@Override
-	public WorkFlowDocumentStep enter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr) throws Exception {
-		WorkFlowDocumentStep curtStep = super.enter(fromnode, node, document, conn, sid, usr);// 当前步骤编号
+	public WorkFlowDocumentStep enter(Integer fromnode, WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid, Integer usrid) throws Exception {
+		WorkFlowDocumentStep curtStep = super.enter(fromnode, node, document, conn, sid, usrid);// 当前步骤编号
 
 		//this.db.update(conn, "update WORKFLOW$DOCUMENT set usrid = ? ,nid = ? where id =?", new Object[] { node.getUsrid(), node.getId(), document.getId() });
 		
 		if (curtStep.getNid() < curtStep.getFromnid()) { // 回退
 			DefaultBackService service = new DefaultBackService();
 			service.setDBControl(this.db);
-			service.back(conn ,document.getId(), curtStep.getNid(), curtStep.getId(), usr, null);
-			super.back(node, null, document, conn, curtStep.getId(), usr, null);
+			service.back(conn ,document.getId(), curtStep.getNid(), curtStep.getId(), usrid, null ,2);
+			super.back(node, null, document, conn, curtStep.getId(), usrid, null);
 		} else { // 提交
 			Integer transitionId = 0;
 
 			transitionId = getTransitionId(conn ,document, curtStep, node.getCfg());
 			DefaultSubmitService service = new DefaultSubmitService();
 			service.setDBControl(this.db);
-			service.submit(conn ,document.getId(), transitionId, curtStep.getId(), usr);
+			service.submit(conn ,document.getId(), transitionId, curtStep.getId(), usrid);
 
 		}
 
@@ -41,7 +40,7 @@ public class DefaultBranchNodeHandler extends NodeHandlerAdapter {
 	}
 
 	@Override
-	public void back(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, IUser usr, String msg) throws Exception {
+	public void back(WorkFlowNode node, Integer tonid, VWorkFlowDocument document, Connection conn, Integer sid, Integer usrid, String msg) throws Exception {
 		return ;
 	}
 

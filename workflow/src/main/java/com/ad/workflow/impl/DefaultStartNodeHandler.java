@@ -17,7 +17,7 @@ import com.ad.workflow.model.view.VWorkFlowDocument;
 public class DefaultStartNodeHandler extends NodeHandlerAdapter {
 	private Logger log = Logger.getLogger(DefaultStartNodeHandler.class);
 	@Override
-	public WorkFlowDocumentStep enter(Integer fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,IUser usr) throws Exception {
+	public WorkFlowDocumentStep enter(Integer fromnode,WorkFlowNode node, VWorkFlowDocument document, Connection conn, Integer sid ,Integer usrid) throws Exception {
 		if (log.isDebugEnabled()) {
 			log.debug("enter invoke!");
 		}
@@ -31,7 +31,7 @@ public class DefaultStartNodeHandler extends NodeHandlerAdapter {
 //		step.setFromnid(fromnode);
 //		step.setFromsid(sid);
 //		this.db.insert(conn, step);
-		WorkFlowDocumentStep step = super.enter(fromnode, node, document, conn, sid, usr);
+		WorkFlowDocumentStep step = super.enter(fromnode, node, document, conn, sid, usrid);
 		
 		return step;
 	}

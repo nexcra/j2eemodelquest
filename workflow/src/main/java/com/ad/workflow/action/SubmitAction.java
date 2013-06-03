@@ -62,7 +62,7 @@ public class SubmitAction extends ActionSupport implements DataBaseAware, Sessio
 		try {
 			conn =this.db.getDataSource().getConnection();
 			conn.setAutoCommit(false);
-			service.submit(conn ,did, tid, sid ,usr);
+			service.submit(conn ,did, tid, sid ,usr.getUserId());
 			conn.commit();
 		} catch (Exception ex) {
 			outdata.setMessage(ex.getLocalizedMessage());

@@ -75,7 +75,7 @@ public class DefaultWorkFlowService implements IWorkFlow {
 		}
 
 		if (nodeHandler instanceof INodeHandler) {
-			((INodeHandler) nodeHandler).beforeEnter(null, node, document, conn, null, usr);
+			((INodeHandler) nodeHandler).beforeEnter(null, node, document, conn, null, usr.getUserId());
 		} else {
 			new RuntimeException(node.getHandler() + "不是INodeHandler的实现类！");
 		}
@@ -85,7 +85,7 @@ public class DefaultWorkFlowService implements IWorkFlow {
 		doc.setId(did);
 		document.setId(doc.getId());
 
-		((INodeHandler) nodeHandler).enter(null, node, document, conn, null, usr);
+		((INodeHandler) nodeHandler).enter(null, node, document, conn, null, usr.getUserId());
 
 		document = (VWorkFlowDocument) this.db.query2Bean(conn, SQL, VWorkFlowDocument.class, new Object[] { doc.getId() });
 
