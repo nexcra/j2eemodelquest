@@ -4,7 +4,7 @@
 
 	<groupId>com.ad</groupId>
 	<artifactId>mq-actions</artifactId>
-	<version>0.0.6</version>
+	<version>0.0.6-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>mq-actions</name>
@@ -29,10 +29,10 @@
 		<dependency>
 			<groupId>com.ad</groupId>
 			<artifactId>mq</artifactId>
-			<version>0.0.8</version>
+			<version>0.0.9-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
-	<distributionManagement>
+	<!-- <distributionManagement>
 		<repository>
 			<id>nexus-releases</id>
 			<name>Nexus Release Repository</name>
@@ -43,5 +43,5 @@
 			<name>Nexus Snapshot Repository</name>
 			<url>http://192.168.1.222:8081/nexus/content/repositories/snapshots/</url>
 		</snapshotRepository>
-	</distributionManagement>
+	</distributionManagement> -->
 </project>
