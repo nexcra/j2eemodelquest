@@ -207,7 +207,7 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 
 		this.sql = sb.toString();
 		if (!StringUtils.isEmpty(this.$queryvalue) && !StringUtils.isEmpty(this.$querynames)) {
-			this.sql = "SELECT * FROM (" + this.sql + ") WHERE " + this.$querynames + "LIKE '%" + this.$queryvalue + "%'";
+			this.sql = "SELECT * FROM (" + this.sql + ") WHERE " + this.$querynames + " LIKE '%" + this.$queryvalue + "%'";
 		}
 
 		if (!StringUtils.isEmpty(this.$group)) {
