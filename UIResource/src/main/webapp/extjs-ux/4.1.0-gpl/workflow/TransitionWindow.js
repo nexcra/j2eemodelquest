@@ -28,7 +28,7 @@ Ext.define('com.ad.workflow.TransitionWindow', {
 							_dataid : 202,
 							border : 1,
 							_extraParams : {
-								nid : me._document.nid
+								nid : me._document.nodeid
 							}
 						});
 				me.callParent();

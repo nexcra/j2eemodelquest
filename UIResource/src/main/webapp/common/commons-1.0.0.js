@@ -6,14 +6,17 @@ Ext.onReady(function() {
 				version : '1.0',
 				company : 'ad',
 				ajax : function(config) {// 异步Ajas
-					var wait = this.createWaitWindow();
+					var wait = null;
+					if (Ext.isEmpty(config.hasWaitWidow) || !!config.hasWaitWidow)
+						wait = this.createWaitWindow();
 
 					Ext.Ajax.request({
 								url : config.url || 'mq',
 								params : config.params,
 								method : 'post',
 								success : function(response, options) {
-									wait.close();
+									if (!!wait)
+										wait.close();
 									var json = Ext.JSON.decode(response.responseText || '{}');
 									if (config.callback && json && json.session) {
 										config.callback(json);
@@ -23,7 +26,8 @@ Ext.onReady(function() {
 									
 								},
 								failure : function(response, options) {
-									wait.close();
+									if (!!wait)
+										wait.close();
 									Ext.MessageBox.alert('错误', '服务器发生错误！');
 								}
 							});

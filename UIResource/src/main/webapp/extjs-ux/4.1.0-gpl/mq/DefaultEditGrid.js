@@ -68,6 +68,7 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 								clicksToMoveEditor : 1,
 								autoCancel : false,
 								pluginId : 'rowEditing',
+								errorSummary:false,
 								listeners : {
 									edit : function(editor, context, eOpts) {
 										me.doSave(editor, context, eOpts);
@@ -149,18 +150,17 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 			},
 			doRefresh : function() {
 				this.getStore().load();
-				this.getSelectionModel().clearSelections();
+				this.getSelectionModel().deselectAll();
 			},
 			doValidateedit : function(editor, context, eOpts) {
-				
-				
-//				if (hasChange) {
-//					var newData = Ext.clone(context.record.data);
-//					Ext.apply(newData, data);
-//					context.originalValues = newData;
-//				}else{
-//					context.originalValues = context.record.data;
-//				}
+
+				// if (hasChange) {
+				// var newData = Ext.clone(context.record.data);
+				// Ext.apply(newData, data);
+				// context.originalValues = newData;
+				// }else{
+				// context.originalValues = context.record.data;
+				// }
 
 			},
 			doSave : function(editor, context) {
@@ -173,28 +173,27 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 					return;
 				}
 
-				
 				var columns = editor.grid.columns;
 				var data = context.record.data;
-			    var hasChange = false;
+				var hasChange = false;
 				Ext.Array.each(columns, function(colmn, index, countriesItSelf) {
 							var field = colmn.field;
 							if (field.$className === 'Ext.form.field.ComboBox' && field.store.aliasFields) {
 								if (field.getValue() !== field.getRawValue()) {
 									data[field.store.aliasFields[0]] = field.getValue();
 									data[field.store.aliasFields[1]] = field.getRawValue();
-									 hasChange = true;
-									 console.log(field.getValue());
+									hasChange = true;
+									// console.log(field.getValue());
 								}
 
 							}
 						});
-				
-				
+
 				var params = Ext.clone(me.getStore().getProxy().extraParams);
 				var insertActionId = me.input.cfg.form.insert_actionid || 1003;
 				var updateActionId = me.input.cfg.form.update_actionid || 1001;
-				var isNew = false;
+				var isNew = context.record.isNew;
+				/*
 				if (me.idProperty.constructor == String) {
 					if (!context.record.get(me.idProperty)) {
 						isNew = true;
@@ -206,7 +205,7 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 							break;
 						}
 					}
-				}
+				}*/
 				Ext.apply(params, {
 							$actionid : !isNew ? updateActionId : insertActionId,
 							$dataid : me.input.dataid
@@ -235,11 +234,21 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 				var me = this;
 				var params = Ext.clone(me.getStore().getProxy().extraParams);
 				var rowEditing = me.getPlugin('rowEditing');
+
+				var clumns = me.columns;
+				for (var i = 0, len = clumns.length; i < len; i++) {
+					if (clumns[i].initialConfig.editor && clumns[i].initialConfig.editor.value)
+						params[clumns[i].initialConfig.dataIndex] = clumns[i].initialConfig.editor.value;
+				}
+				// console.log(clumns);
+				// console.log(params);
+				// dataIndex ,editor
 				// if (!rowEditing)
 				// return;
 				rowEditing.cancelEdit();
 				// Create a model instance
 				var r = Ext.create(me.getStore().model, params);
+				r.isNew = true;
 				me.getStore().insert(0, r);
 				rowEditing.startEdit(0, 0);
 			},
@@ -374,6 +383,16 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 							return 0;
 						});
 				var columns = [];
+				
+				if (!me.input.cfg.grid.showRownumberer){
+					columns.push({
+							xtype : 'rownumberer',
+							header : '序号',
+							defaultWidth : 50,
+							minWidth : 50
+						});
+				}
+				
 				var column;
 				Ext.each(data, function(value) {
 							column = {
@@ -403,6 +422,7 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 								switch (value.ftype) {
 									case 'float' :
 									case 'int' :
+
 										column.xtype = 'numbercolumn';
 										break;
 									case 'date' :
@@ -419,38 +439,40 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 									});
 							columns.push(column);
 						});
+//				console.log(columns);
 				return columns;
 			},
 			initMenuBar : function(_cfg, _auth, _dataid) {
 				var me = this;
-				var tbarItems = [{
-							iconCls : Ext.baseCSSPrefix + 'tbar-loading',
-							tooltip : '刷新[' + _dataid + ']',
-							scope : this,
-							itemId : '_grid_refersh',
-							handler : me.doRefresh
-						}];
+				var tbarItems = [];
+//				var tbarItems = [Ext.create('Ext.Button',{
+//							iconCls : Ext.baseCSSPrefix + 'tbar-loading',
+//							tooltip : '刷新[' + _dataid + ']',
+//							scope : this,
+//							itemId : '_grid_refersh',
+//							handler : me.doRefresh
+//						})];
 
 				if ((_auth & 1) === 1) {
-					tbarItems.push({
+					tbarItems.push(Ext.create('Ext.Button',{
 								iconCls : 'icon-add',
 								tooltip : '添加',
 								scope : this,
 								itemId : '_grid_add',
 								handler : me.doAdd
-							});
+							}));
 
 				}
 
 				if ((_auth & 2) === 2) {
-					tbarItems.push({
+					tbarItems.push(Ext.create('Ext.Button',{
 								iconCls : 'icon-delete',
 								tooltip : '删除',
 								disabled : true,
 								itemId : '_grid_delete',
 								scope : this,
 								handler : me.doDelete
-							});
+							}));
 				}
 				var tbarItemClazz = _cfg.grid.tbarItems || [];
 

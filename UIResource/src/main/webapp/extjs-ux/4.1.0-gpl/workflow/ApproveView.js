@@ -26,12 +26,20 @@ Ext.define('com.ad.workflow.ApproveView', {
 					border : 0,
 					items : null
 				};
-
+				me.listeners = {
+				tabchange :function( tabPanel, newCard, oldCard, eOpts )	{
+					
+					var o = newCard.items.getAt(0);
+					if (Ext.typeOf(o.doFocus)==='function'){
+						o.doFocus();
+					}
+				}
+				};
 				com.ad.ajax({
 							params : {
 								$actionid : 1004,
 								$dataid : 201,
-								nid : me._document.nid
+								nid : me._document.nodeid
 							},
 							
 							callback : function(input) {

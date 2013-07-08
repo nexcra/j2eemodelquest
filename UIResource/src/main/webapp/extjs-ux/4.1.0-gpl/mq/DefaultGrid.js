@@ -42,8 +42,9 @@ Ext.define('com.ad.mq.DefaultGrid', {
 			config : {
 				input : null,
 				_localcfgToken : null,
-				_localcfgName : null,
-				_localcfgAuthName : null
+				_localcfgName : null
+//				,
+//				_localcfgAuthName : null
 			},
 			constructor : function(cfg) {
 				this.callParent(arguments);
@@ -56,7 +57,6 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				var _dataid = me.input.dataid;
 				var _auth = me.input.auth;
 				var _data = me.input.data;
-
 				if (_auth === -1)
 					_auth = 0;
 				me.input.selectionHook = [];
@@ -112,17 +112,17 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				// itemId : '_grid_refersh',
 				// handler : me.doRefresh
 				// }
-
-				if ((_auth & 1) === 1) {
-					tbarItems.push({
-								iconCls : 'icon-add',
-								tooltip : '添加',
-								scope : me,
-								itemId : '_grid_add',
-								handler : me.onAddClick
-							});
-
-				}
+//
+//				if ((_auth & 1) === 1) {
+//					tbarItems.push({
+//								iconCls : 'icon-add',
+//								tooltip : '添加',
+//								scope : me,
+//								itemId : '_grid_add',
+//								handler : me.onAddClick
+//							});
+//
+//				}
 
 				if ((_auth & 2) === 2) {
 					tbarItems.push({
@@ -428,14 +428,13 @@ Ext.define('com.ad.mq.DefaultGrid', {
 			},
 			 doRefresh : function() {
 				this.store.load();
-				this.getSelectionModel().clearSelections();
+				this.getSelectionModel().deselectAll();
 			},
 			onAddClick : function() {
-				this.createWindow(this);
+				this.createWindow(this.getView());
 			},
 			createWindow : function(view, record, item, index, eOpts) {
 				var me = this;
-
 				var formCfg = me.input;
 				Ext.apply(formCfg, {
 							grid : {
@@ -471,14 +470,15 @@ Ext.define('com.ad.mq.DefaultGrid', {
 			onDeleteClick : function() {
 				var me = this;
 				var selection = me.getView().getSelectionModel().getSelection()[0];
+				var params = Ext.clone(me.getView().getStore().getProxy().extraParams);
 				var deleteActionId = me.input.cfg.grid.delete_actionid || 1002;
 				if (selection) {
 					if (!me.idProperty)
 						return;
-					var params = {
+					Ext.apply(params,{
 						$actionid : deleteActionId,
 						$dataid : me.input.dataid
-					};
+					});
 					switch (Ext.type(me.idProperty)) {
 						case 'string' :
 							if (!selection.get(me.idProperty)) {
@@ -554,6 +554,14 @@ Ext.define('com.ad.mq.DefaultGrid', {
 							return 0;
 						});
 				var columns = [];
+				if (!me.input.cfg.grid.showRownumberer){
+					columns.push({
+							xtype : 'rownumberer',
+							header : '序号',
+							defaultWidth : 50,
+							minWidth : 50
+						});
+				}
 				var column;
 				Ext.each(data, function(value) {
 							column = {
