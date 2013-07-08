@@ -20,8 +20,9 @@ Ext.define('com.ad.mq.DefaultGridPanel', {
 				_autoLoad : true,
 				_auth : 0,
 				_localcfgToken : null ,
-				_localcfgName : null,
-				_localcfgAuthName : null 
+				_localcfgName : null
+//				,
+//				_localcfgAuthName : null 
 			},
 			constructor : function(cfg) {
 				this.callParent(arguments);
@@ -35,13 +36,13 @@ Ext.define('com.ad.mq.DefaultGridPanel', {
 				tokenName = Ext.Loader.getConfig('appName') + '$' +(me._localcfgToken || ('data_' + me._dataid + '$token')), 
 				localCfg = null, 
 				localCfgName = Ext.Loader.getConfig('appName') + '$' + (me._localcfgName || ('data_' + me._dataid)),
-				storeAuth = 0,
-				storeAuthName = Ext.Loader.getConfig('appName') + '$' + (me._localcfgAuthName || ('data_' + me._dataid + '$auth'));
+				storeAuth = 0;
+//				storeAuthName = Ext.Loader.getConfig('appName') + '$' + (me._localcfgAuthName || ('data_' + me._dataid + '$auth'));
 
 				if (localStorage) {
 					token = localStorage.getItem(tokenName) || -1;
 					localCfg = localStorage.getItem(localCfgName);
-					storeAuth = localStorage.getItem(storeAuthName) || 0;
+//					storeAuth = localStorage.getItem(storeAuthName) || 0;
 					if (localCfg){
 						localCfg = Ext.JSON.decode(localCfg);
 						if (!localCfg.data){
@@ -59,33 +60,39 @@ Ext.define('com.ad.mq.DefaultGridPanel', {
 								token : token
 							},
 							callback : function(dd) {
+								storeAuth = dd.auth;
 								if (localStorage) {
 									if (dd.token > token) {
 										localStorage.setItem(localCfgName, Ext.JSON.encode(dd));
 										localStorage.setItem(tokenName, dd.token);
 										localCfg = dd;
 									}
-									if (dd.auth != storeAuth){
-										localStorage.setItem(storeAuthName, dd.auth);
-										storeAuth = dd.auth;
-									}
+//									if (dd.auth != storeAuth){
+//										localStorage.setItem(storeAuthName, dd.auth);
+//										
+//									}
 								} else {
 									localCfg = dd;
 								}
+								
 								if (!localCfg || !localCfg.data) {
 									me.html = '<div style="color:red;font-size:14pt;">获取配置数据失败！</div>';
 								} else {
+									
 									var cfg = {
 										data : localCfg.data,
 										cfg : Ext.JSON.decode(localCfg.cfg || {}),
 										dataid : me._dataid,
 										auth : (me._auth || storeAuth || 0)
 									};
+									
+									
 									var grid = Ext.create('com.ad.mq.DefaultGrid', Ext.apply({
 														input : cfg,
 														_localcfgToken : tokenName ,
-														_localcfgName : localCfgName,
-														_localcfgAuthName : storeAuthName 
+														_localcfgName : localCfgName
+//														,
+//														_localcfgAuthName : storeAuthName 
 													}, me._gridcfg));
 									me._gridpanel = grid;
 									me.add(grid).show();

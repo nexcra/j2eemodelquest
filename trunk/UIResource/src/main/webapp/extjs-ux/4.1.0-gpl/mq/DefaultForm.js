@@ -31,6 +31,12 @@ Ext.define('com.ad.mq.DefaultForm', {
 				this.initConfig(cfg);
 				return this;
 			},
+			doRefresh : function(gridView) {
+				var me = this;
+				var gridView = me.input.grid.oView;
+				gridView.store.load();
+				gridView.getSelectionModel().clearSelections();
+			},
 			initComponent : function() {
 				var me = this;
 				var _cfg = me.input.cfg;
@@ -59,8 +65,9 @@ Ext.define('com.ad.mq.DefaultForm', {
 
 				Ext.apply(me, _cfg.form || {});
 				me.buttons = [];
+				var saveBtnState = _cfg.form.saveBtn  || false;
 
-				if (((_auth & 4) === 4) || ((_auth & 1) === 1)) {
+				if (((_auth & 4) === 4) || ((_auth & 1) === 1) || saveBtnState ) {
 
 					var insertActionId = _cfg.form.insert_actionid || 1003;
 					var updateActionId = _cfg.form.update_actionid || 1001;
@@ -86,9 +93,9 @@ Ext.define('com.ad.mq.DefaultForm', {
 													if (rtn.session) {
 														mb.setValue('处理成功！');
 														if (me.input.grid.oRecord)
-															me.input.grid.oView.store.load();
+															me.doRefresh();
 														else {
-															me.input.grid.oView.store.load();
+															me.doRefresh();
 															me.up('window').destroy();
 														}
 													} else {

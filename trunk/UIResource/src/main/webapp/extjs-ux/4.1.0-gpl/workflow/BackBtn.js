@@ -28,25 +28,20 @@ Ext.define('com.ad.workflow.BackBtn', {
 							if (Ext.type(o.beforeBack) === 'function') {
 								ok = o.beforeBack();
 							}
-							if (!ok)return false;
-							
+							if (!ok)
+								return false;
+
 						});
 				if (!ok)
 					return;
-				// prompt( String title, String msg, [Function fn], [Object
-				// scope], [Boolean/Number multiline], [String value] ) :
-				// Ext.window.MessageBox
-				Ext.Msg.prompt('提醒', '请填写回退原因:', function(btn, txt) {
-							if (Ext.isEmpty(txt))
-								return false;
-							if (btn === 'ok') {
+				Ext.Msg.confirm('提醒', '确认要回退当前案件？', function(opt) {
+							if (opt == 'yes') {
 								com.ad.ajax({
 											params : {
 												$actionid : 203,
 												did : me._document.id,
-												nid : me._document.nid,
-												sid : me._document.stepid,
-												msg : txt
+												nid : me._document.nodeid,
+												sid : me._document.stepid
 											},
 											callback : function(input) {
 												if (Ext.isEmpty(input.message)) {
@@ -59,6 +54,6 @@ Ext.define('com.ad.workflow.BackBtn', {
 											}
 										});
 							}
-						}, this, 2);
+						});
 			}
 		});

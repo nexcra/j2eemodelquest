@@ -208,3 +208,20 @@
 ._xfield {
 	background-color: #DFE800;
 }
+
+.printTableTitle {
+	text-align: center;
+	font-size: 16pt;
+	font-family: 微软雅黑, ​宋体;
+}
+
+.printTable {
+	width: 80%;
+	margin:auto;
+	border-collapse: collapse;
+	border: 1px solid #ccc;
+}
+
+.printTable td {
+	border: 1px solid #ccc;
+}
