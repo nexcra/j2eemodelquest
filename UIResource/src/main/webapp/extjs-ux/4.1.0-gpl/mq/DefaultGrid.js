@@ -112,17 +112,17 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				// itemId : '_grid_refersh',
 				// handler : me.doRefresh
 				// }
-//
-//				if ((_auth & 1) === 1) {
-//					tbarItems.push({
-//								iconCls : 'icon-add',
-//								tooltip : '添加',
-//								scope : me,
-//								itemId : '_grid_add',
-//								handler : me.onAddClick
-//							});
-//
-//				}
+
+				if ((_auth & 1) === 1) {
+					tbarItems.push({
+								iconCls : 'icon-add',
+								tooltip : '添加',
+								scope : me,
+								itemId : '_grid_add',
+								handler : me.onAddClick
+							});
+
+				}
 
 				if ((_auth & 2) === 2) {
 					tbarItems.push({

@@ -78,12 +78,12 @@ Ext.define('com.ad.mq.DefaultGridPanel', {
 								if (!localCfg || !localCfg.data) {
 									me.html = '<div style="color:red;font-size:14pt;">获取配置数据失败！</div>';
 								} else {
-									
+									var dataCfg = Ext.JSON.decode(localCfg.cfg || {});
 									var cfg = {
 										data : localCfg.data,
-										cfg : Ext.JSON.decode(localCfg.cfg || {}),
+										cfg : dataCfg,
 										dataid : me._dataid,
-										auth : (me._auth || storeAuth || 0)
+										auth : (me._auth || dataCfg.grid.auth || storeAuth || 0)
 									};
 									
 									

@@ -57,11 +57,12 @@ Ext.define('com.ad.mq.DefaultEditGridPanel', {
 						if (!localCfg || !localCfg.data) {
 							me.html = '<div style="color:red;font-size:14pt;">获取配置数据失败！</div>';
 						} else {
+							var dataCfg = Ext.JSON.decode(localCfg.cfg || {});
 							var cfg = {
 								data : localCfg.data,
-								cfg : Ext.JSON.decode(localCfg.cfg || {}),
+								cfg : dataCfg,
 								dataid : me._dataid,
-								auth : (me._auth || dd.auth || 0)
+								auth : (me._auth || dataCfg.grid.auth || dd.auth || 0)
 							};
 							var grid = Ext.create('com.ad.mq.DefaultEditGrid', Ext.apply({
 												input : cfg,
