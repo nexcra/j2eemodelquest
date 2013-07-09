@@ -9,6 +9,7 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 				_store : null, // 数据源
 				_tabletitle : null, // 表的标题
 				_headerHTML : null, // 头部说明修饰
+				_TH : null, // 表格字段头
 				_footerHTML : null, // 尾部说明修饰
 				_fields : [], // 字段列表
 				_sumfields : [],
@@ -37,12 +38,18 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 				var headerDIV = me._headerHTML ? ('<div>' + me._headerHTML + '</div>') : null;
 				var footerDIV = me._footerHTML ? ('<div>' + me._footerHTML + '</div>') : null;
 				var tableBody = '<div style="text-align:center;"><table class="printTable"><tr>';
-				if (me._showIdxNum) {
-					tableBody += '<td style="width:100px;text-align:center;"> 序号</td>';
+
+				if (!!me._TH) {
+					tableBody += me._TH;
+				} else {
+					if (me._showIdxNum) {
+						tableBody += '<td style="width:100px;text-align:center;"> 序号</td>';
+					}
+					for (var i = 0, len = me._fields.length; i < len; i++) {
+						tableBody += '<td style="' + me._fields[i]['style'] + '" >' + me._fields[i]['name'] + '</td>';
+					}
 				}
-				for (var i = 0, len = me._fields.length; i < len; i++) {
-					tableBody += '<td style="' + me._fields[i]['style'] + '" >' + me._fields[i]['name'] + '</td>';
-				}
+
 				tableBody += '</tr>';
 				var cunt = 0;
 				me._store.each(function(record) {
@@ -51,7 +58,9 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 								tableBody += '<td style="text-align:center;">' + (++cunt) + '</td>';
 							}
 							for (var i = 0, len = me._fields.length; i < len; i++) {
-								tableBody += '<td style="' + me._fields[i]['style'] + '" >' + record.get(me._fields[i]['dataIndex']) + '</td>';
+								var val = record.get(me._fields[i]['dataIndex']);
+								
+								tableBody += '<td style="' + me._fields[i]['style'] + '" >' + (Ext.isEmpty(val)?'':val) + '</td>';
 							}
 							for (var i = 0, len = me._sumfields.length; i < len; i++) {
 								me._sumfields[i]['value'] += record.get(me._sumfields[i]['dataIndex']);
