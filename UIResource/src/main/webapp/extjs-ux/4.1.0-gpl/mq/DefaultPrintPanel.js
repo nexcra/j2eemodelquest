@@ -5,10 +5,12 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 			extend : 'Ext.panel.Panel',
 			layout : 'fit',
 			border : 0,
+			autoScroll : true,
 			config : {
 				_store : null, // 数据源
 				_tabletitle : null, // 表的标题
 				_headerHTML : null, // 头部说明修饰
+				_totalTD : null,
 				_TH : null, // 表格字段头
 				_footerHTML : null, // 尾部说明修饰
 				_fields : [], // 字段列表
@@ -59,8 +61,10 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 							}
 							for (var i = 0, len = me._fields.length; i < len; i++) {
 								var val = record.get(me._fields[i]['dataIndex']);
-								
-								tableBody += '<td style="' + me._fields[i]['style'] + '" >' + (Ext.isEmpty(val)?'':val) + '</td>';
+								if (Ext.typeOf(val)==='date'){
+									val = Ext.Date.format(val ,'Y-m-d');
+								}
+								tableBody += '<td style="' + me._fields[i]['style'] + '" >' + (Ext.isEmpty(val) ? '' : val) + '</td>';
 							}
 							for (var i = 0, len = me._sumfields.length; i < len; i++) {
 								me._sumfields[i]['value'] += record.get(me._sumfields[i]['dataIndex']);
@@ -73,33 +77,13 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 					if (me._showIdxNum) {
 						colspanNum = 1;
 					}
-					tableBody += '<tr>';
-					var hasTrue = false;
-					for (var i = 0, len = me._fields.length; i < len; i++) {
+
+					if (me._totalTD) {
 						for (var j = 0, lj = me._sumfields.length; j < lj; j++) {
-							if (me._fields[i]['dataIndex'] == me._sumfields[j]['dataIndex']) {
-								tableBody += '<td colspan="' + colspanNum + '" style="text-align:center;">合计</td><td>' + me._sumfields[j]['value'] + '</td>';
-								i++;
-								hasTrue = true;
-								break;
-							}
-							colspanNum++;
+							me._totalTD = me._totalTD.replace("{" + me._sumfields[j]['dataIndex'] + '}', Ext.util.Format.number(me._sumfields[j]['value'],'0,000.00'));
 						}
-
-						if (i < len && hasTrue) {
-							for (var j = 0, lj = me._sumfields.length; j < lj; j++) {
-								tableBody += '<td>';
-								if (me._fields[i]['dataIndex'] == me._sumfields[j]['dataIndex']) {
-									tableBody += me._sumfields[j]['value'];
-								} else {
-									tableBody += '-';
-								}
-								tableBody += '</td>';
-							}
-						}
-
+						tableBody += me._totalTD;
 					}
-					tableBody += '</tr>';
 				}
 
 				tableBody += '</table></div>';

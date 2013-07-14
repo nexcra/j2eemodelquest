@@ -215,11 +215,12 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 							params : params,
 							callback : function(returndata) {
 								if (returndata.data) {
-									if (isNew) {
-										me.doRefresh();
-									} else {
-										context.record.commit();
-									}
+									me.doRefresh();
+//									if (isNew) {
+//										me.doRefresh();
+//									} else {
+//										context.record.commit();
+//									}
 
 									// 
 								} else {
