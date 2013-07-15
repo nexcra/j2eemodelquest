@@ -2,6 +2,10 @@
 	font-family: 微软雅黑, 宋体, helvetica, tahoma, verdana, sans-serif;
 }
 
+.PageNext {
+	page-break-after: always;
+}
+
 .settings {
 	background-image: url(../images/folder_wrench.png);
 }
@@ -213,15 +217,17 @@
 	text-align: center;
 	font-size: 16pt;
 	font-family: 微软雅黑, ​宋体;
+	height: 40px;
 }
 
 .printTable {
 	width: 80%;
-	margin:auto;
+	margin: auto;
 	border-collapse: collapse;
 	border: 1px solid #ccc;
 }
 
 .printTable td {
 	border: 1px solid #ccc;
+	text-align:center;
 }
