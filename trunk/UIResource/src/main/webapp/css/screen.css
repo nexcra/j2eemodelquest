@@ -221,13 +221,15 @@
 }
 
 .printTable {
-	width: 80%;
+	width: 90%;
 	margin: auto;
 	border-collapse: collapse;
-	border: 1px solid #ccc;
+	border: 1px solid #000;
 }
 
 .printTable td {
-	border: 1px solid #ccc;
+	border: 1px solid #000;
 	text-align:center;
+	font-size: 12pt;
+	font-family: 微软雅黑, ​宋体;
 }
