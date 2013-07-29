@@ -59,7 +59,7 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 
 				me.features = [filtersFeature];
 
-				if ((_auth & 4) === 4) {
+				if ((_auth & 4) === 4 || (_auth & 1) === 1) {
 					var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
 								saveBtnText : '保存',
 								cancelBtnText : '取消',
