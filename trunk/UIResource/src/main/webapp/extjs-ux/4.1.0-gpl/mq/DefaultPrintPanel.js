@@ -36,10 +36,10 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 								me.doPrint();
 							}
 						}];
-				var titleDIV = '<div class="printTableTitle">' + me._tabletitle + '</div>';
+				var titleDIV = '<div class="printTableTitle printTable_Title">' + me._tabletitle + '</div>';
 				var headerDIV = me._headerHTML ? ('<div>' + me._headerHTML + '</div>') : null;
 				var footerDIV = me._footerHTML ? ('<div>' + me._footerHTML + '</div>') : null;
-				var tableBody = '<div style="text-align:center;"><table class="printTable"><tr>';
+				var tableBody = '<div style="text-align:center;"><table class="printTable print_Table"><tr>';
 
 				if (!!me._TH) {
 					tableBody += me._TH;
