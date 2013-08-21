@@ -43,8 +43,8 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				input : null,
 				_localcfgToken : null,
 				_localcfgName : null
-//				,
-//				_localcfgAuthName : null
+				// ,
+				// _localcfgAuthName : null
 			},
 			constructor : function(cfg) {
 				this.callParent(arguments);
@@ -77,6 +77,9 @@ Ext.define('com.ad.mq.DefaultGrid', {
 
 				me.columns = me.getColumnsCfg(_data);
 				var queryActionId = _cfg.grid.select_actionid || 1000;
+				if (_cfg.grid.NotShowPaging) {
+					queryActionId = _cfg.grid.select_actionid || 1004;
+				}
 
 				var params = {
 					$actionid : queryActionId
@@ -100,18 +103,18 @@ Ext.define('com.ad.mq.DefaultGrid', {
 							pruneModifiedRecords : true,
 							autoLoad : false
 						});
+				
 				var store = Ext.create('App.store.JsonStore', storeCfg);
 				me.store = store;
+				var tbarItems = [
 
-				var tbarItems = [];
-
-				// {
-				// iconCls : Ext.baseCSSPrefix + 'tbar-loading',
-				// tooltip : '刷新[' + _dataid + ']',
-				// scope : me,
-				// itemId : '_grid_refersh',
-				// handler : me.doRefresh
-				// }
+				{
+							iconCls : Ext.baseCSSPrefix + 'tbar-loading',
+							tooltip : '刷新[' + _dataid + ']',
+							scope : me,
+							itemId : '_grid_refersh',
+							handler : me.doRefresh
+						}];
 
 				if ((_auth & 1) === 1) {
 					tbarItems.push({
@@ -245,19 +248,21 @@ Ext.define('com.ad.mq.DefaultGrid', {
 						bbarItems.push(newObject);
 					}
 				}
-				me.bbar = Ext.create('Ext.toolbar.Paging', {
-							dock : 'bottom',
-							store : store,
-							items : bbarItems,
-							displayInfo : true,
-							refreshText : '刷新[' + _dataid + ']',
-							listeners : {
-								beforechange : function( __this ,page ,eOpts) {
-									me.getSelectionModel().clearSelections();
+				if (_cfg.grid.NotShowPaging) {
+				} else {
+					me.bbar = Ext.create('Ext.toolbar.Paging', {
+								dock : 'bottom',
+								store : store,
+								items : bbarItems,
+								displayInfo : true,
+								refreshText : '刷新[' + _dataid + ']',
+								listeners : {
+									beforechange : function(__this, page, eOpts) {
+										me.getSelectionModel().clearSelections();
+									}
 								}
-							}
-						});
-
+							});
+				}
 				me.getSelectionModel().on('selectionchange', me.onSelectChange, me);
 				if (((_auth & 4) === 4) || ((_auth & 8) === 8)) {
 					me.listeners = Ext.apply(me.listeners || {}, {
@@ -426,7 +431,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				}
 
 			},
-			 doRefresh : function() {
+			doRefresh : function() {
 				this.store.load();
 				this.getSelectionModel().deselectAll();
 			},
@@ -475,10 +480,10 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				if (selection) {
 					if (!me.idProperty)
 						return;
-					Ext.apply(params,{
-						$actionid : deleteActionId,
-						$dataid : me.input.dataid
-					});
+					Ext.apply(params, {
+								$actionid : deleteActionId,
+								$dataid : me.input.dataid
+							});
 					switch (Ext.type(me.idProperty)) {
 						case 'string' :
 							if (!selection.get(me.idProperty)) {
@@ -507,14 +512,9 @@ Ext.define('com.ad.mq.DefaultGrid', {
 												url : 'mq',
 												params : params,
 												callback : function(dd) {
-													if (dd.data > 0)
-														me.getStore().load();
-													else {
-														if (Ext.isEmpty(dd.message)) {
-															Ext.Msg.alert('删除数据失败！');
-														} else {
-															Ext.Msg.alert(dd.message);
-														}
+													me.getStore().load();
+													if (!!dd.message) {
+														Ext.Msg.alert('错误', dd.message);
 													}
 
 												}
@@ -554,13 +554,13 @@ Ext.define('com.ad.mq.DefaultGrid', {
 							return 0;
 						});
 				var columns = [];
-				if (!me.input.cfg.grid.showRownumberer){
+				if (!me.input.cfg.grid.showRownumberer) {
 					columns.push({
-							xtype : 'rownumberer',
-							header : '序号',
-							defaultWidth : 50,
-							minWidth : 50
-						});
+								xtype : 'rownumberer',
+								header : '序号',
+								defaultWidth : 50,
+								minWidth : 50
+							});
 				}
 				var column;
 				Ext.each(data, function(value) {

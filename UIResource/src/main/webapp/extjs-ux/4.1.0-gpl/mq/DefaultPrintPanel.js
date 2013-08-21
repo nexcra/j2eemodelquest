@@ -13,6 +13,7 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 				_totalTD : null,
 				_TH : null, // 表格字段头
 				_footerHTML : null, // 尾部说明修饰
+				_footerTD : null, // 尾部追加
 				_fields : [], // 字段列表
 				_sumfields : [],
 				_showIdxNum : false,
@@ -64,6 +65,9 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 								if (Ext.typeOf(val)==='date'){
 									val = Ext.Date.format(val ,'Y-m-d');
 								}
+								if (Ext.typeOf(val)==='number'){
+									val = Ext.util.Format.number(val,'0,000.00')
+								}
 								tableBody += '<td style="' + me._fields[i]['style'] + '" >' + (Ext.isEmpty(val) ? '' : val) + '</td>';
 							}
 							for (var i = 0, len = me._sumfields.length; i < len; i++) {
@@ -85,7 +89,9 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 						tableBody += me._totalTD;
 					}
 				}
-
+				if (me._footerTD){
+					tableBody +=me._footerTD;
+				}
 				tableBody += '</table></div>';
 				me.html = '<div id="' + me.printTableAreaId + '">' + titleDIV + (headerDIV ? headerDIV : '') + tableBody + (footerDIV ? footerDIV : '') + '</div>';
 				if (me._autoPrint) {
