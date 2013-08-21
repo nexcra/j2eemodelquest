@@ -327,7 +327,9 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 						});
 
 				var queryActionId = cfg.grid.select_actionid || 1000;
-
+				if (me.input.cfg.grid.NotShowPaging){
+					queryActionId = me.input.cfg.grid.select_actionid || 1004;
+				}
 				var params = {
 					$actionid : queryActionId
 				};
@@ -446,13 +448,13 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 			initMenuBar : function(_cfg, _auth, _dataid) {
 				var me = this;
 				var tbarItems = [];
-//				var tbarItems = [Ext.create('Ext.Button',{
-//							iconCls : Ext.baseCSSPrefix + 'tbar-loading',
-//							tooltip : '刷新[' + _dataid + ']',
-//							scope : this,
-//							itemId : '_grid_refersh',
-//							handler : me.doRefresh
-//						})];
+				var tbarItems = [Ext.create('Ext.Button',{
+							iconCls : Ext.baseCSSPrefix + 'tbar-loading',
+							tooltip : '刷新[' + _dataid + ']',
+							scope : this,
+							itemId : '_grid_refersh',
+							handler : me.doRefresh
+						})];
 
 				if ((_auth & 1) === 1) {
 					tbarItems.push(Ext.create('Ext.Button',{
@@ -576,12 +578,16 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 						bbarItems.push(newObject);
 					}
 				}
-				me.bbar = Ext.create('Ext.toolbar.Paging', {
+				if (_cfg.grid.NotShowPaging){
+				}else{
+					me.bbar = Ext.create('Ext.toolbar.Paging', {
 							dock : 'bottom',
 							store : me.getStore(),
 							items : bbarItems,
 							displayInfo : true
 						});
+				}
+				
 				me.getSelectionModel().on('selectionchange', me.onSelectChange, this);
 			},
 			onSelectChange : function(selModel, selections) {

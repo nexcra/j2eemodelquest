@@ -43,85 +43,49 @@ Ext.define('com.ad.mq.DefaultForm', {
 				var _dataid = me.input.dataid;
 				var _auth = me.input.auth;
 				var _data = me.input.data;
-				var _extraParams = Ext.clone(me.input.grid.oView.getStore().getProxy().extraParams);
+
 				me.layout = 'border';
 
 				me.items = [{
 							region : 'north',
 							bodyStyle : 'padding:0 0 0 10px;background-color:yellow;',
-							height:20,
+							height : 20,
 							itemId : 'msgpanel',
-							items:{
-								itemId :'msgbox' ,
+							items : {
+								itemId : 'msgbox',
 								xtype : 'displayfield',
-								value : _cfg.form.msg? _cfg.form.msg: ':-)'
+								value : _cfg.form.msg ? _cfg.form.msg : ':-)'
 							}
 						}, {
 							region : 'center',
 							layout : 'anchor',
-							border:0,
+							border : 0,
 							items : me.getFormItems(me.input)
 						}];
 
 				Ext.apply(me, _cfg.form || {});
 				me.buttons = [];
-				var saveBtnState = _cfg.form.saveBtn  || false;
+				var saveBtnState = _cfg.form.saveBtn || false;
 
-				if (((_auth & 4) === 4) || ((_auth & 1) === 1) || saveBtnState ) {
+				if (((_auth & 4) === 4) || ((_auth & 1) === 1) || saveBtnState) {
 
-					var insertActionId = _cfg.form.insert_actionid || 1003;
-					var updateActionId = _cfg.form.update_actionid || 1001;
 					me.buttons.push({
-								text : '保存',
+								text : '保存并关闭',
 								handler : function() {
-									var form = me.getForm();
-									if (!form.isValid())
-										return;
-									Ext.apply(_extraParams, {
-												$actionid : me.input.grid.oRecord ? updateActionId : insertActionId,
-												$dataid : _dataid
-											});
-									var mb = me.getComponent('msgpanel').getComponent('msgbox');
-									mb.setFieldStyle({color:''});
-									form.submit({
-												waitTitle : '请稍候',
-												waitMsg : '处理中...',
-												url : 'mq',
-												params : _extraParams,
-												success : function(form, action) {
-													var rtn = Ext.JSON.decode(action.response.responseText || '{}');
-													if (rtn.session) {
-														mb.setValue('处理成功！');
-														if (me.input.grid.oRecord)
-															me.doRefresh();
-														else {
-															me.doRefresh();
-															me.up('window').destroy();
-														}
-													} else {
-														
-														mb.setValue('警告:'+rtn.message);
-													}
-												},
-												failure : function(form, action) {
-													mb.setFieldStyle({color:'red'});
-													switch (action.failureType) {
-														case Ext.form.action.Action.CONNECT_FAILURE :
-															mb.setValue('错误:操作无法完成，请检查你的数据项!');
-															break;
-														case Ext.form.action.Action.SERVER_INVALID :
-															mb.setValue('错误:操作无法完成，请检查你的数据项!!');
-															break;
-														default :
-															mb.setValue('错误:操作无法完成，请检查你的数据项!!!');
-															break;
-													}
-												}
-											});
+									me.doSave(0);
 								}
 							});
 				}
 
+				if ( ((_auth & 1) === 1) || saveBtnState) {
+
+					me.buttons.push({
+								text : '保存并新增',
+								handler : function() {
+									me.doSave(1);
+								}
+							});
+				}
 				me.buttons.push({
 							text : '关闭',
 							handler : function() {
@@ -130,6 +94,64 @@ Ext.define('com.ad.mq.DefaultForm', {
 						});
 
 				me.callParent();
+			},
+			doSave : function(type) {
+				var me = this;
+				var form = me.getForm();
+				if (!form.isValid())
+					return;
+				var _extraParams = Ext.clone(me.input.grid.oView.getStore().getProxy().extraParams);
+				var _cfg = me.input.cfg;
+				var insertActionId = _cfg.form.insert_actionid || 1003;
+				var updateActionId = _cfg.form.update_actionid || 1001;
+				Ext.apply(_extraParams, {
+							$actionid : me.input.grid.oRecord ? updateActionId : insertActionId,
+							$dataid : me.input.dataid
+						});
+				var mb = me.getComponent('msgpanel').getComponent('msgbox');
+				mb.setFieldStyle({
+							color : ''
+						});
+				form.submit({
+							waitTitle : '请稍候',
+							waitMsg : '处理中...',
+							url : 'mq',
+							params : _extraParams,
+							success : function(form, action) {
+								var rtn = Ext.JSON.decode(action.response.responseText || '{}');
+								if (rtn.session) {
+									mb.setValue(rtn.message || '处理成功！');
+									me.doRefresh();
+									switch (type) {
+										case 0 :
+											me.up('window').destroy();
+											break;
+										case 1 :
+											form.reset();
+											break;
+									}
+								} else {
+
+									mb.setValue('警告:' + rtn.message);
+								}
+							},
+							failure : function(form, action) {
+								mb.setFieldStyle({
+											color : 'red'
+										});
+								switch (action.failureType) {
+									case Ext.form.action.Action.CONNECT_FAILURE :
+										mb.setValue('错误:操作无法完成，请检查你的数据项!');
+										break;
+									case Ext.form.action.Action.SERVER_INVALID :
+										mb.setValue('错误:操作无法完成，请检查你的数据项!!');
+										break;
+									default :
+										mb.setValue('错误:操作无法完成，请检查你的数据项!!!');
+										break;
+								}
+							}
+						});
 			},
 			getFormItems : function(cfg) {// 创建 所有form元素
 				if (!cfg.data)
