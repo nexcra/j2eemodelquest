@@ -214,19 +214,10 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 				com.ad.ajax({
 							params : params,
 							callback : function(returndata) {
-								if (returndata.data) {
-									me.doRefresh();
-//									if (isNew) {
-//										me.doRefresh();
-//									} else {
-//										context.record.commit();
-//									}
-
-									// 
-								} else {
-									Ext.Msg.alert('提醒', '数据保存失败！');
+								me.doRefresh();
+								if (returndata.message){
+									Ext.Msg.alert('提醒', returndata.message);
 								}
-
 							}
 						});
 
