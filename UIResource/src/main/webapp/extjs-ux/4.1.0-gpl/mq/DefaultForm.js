@@ -19,8 +19,9 @@ Ext.define('com.ad.mq.DefaultForm', {
 			bodyStyle : 'padding:5px 5px 0',
 			autoScroll : true,
 			// width : 600,
+			layout : 'anchor',
 			fieldDefaults : {
-				labelAlign : 'top',
+				labelAlign : 'right',
 				msgTarget : 'side'
 			},
 			config : {
@@ -37,58 +38,87 @@ Ext.define('com.ad.mq.DefaultForm', {
 				gridView.store.load();
 				gridView.getSelectionModel().clearSelections();
 			},
+			showMsg : function(msg, type) {
+				var m = this.msgComp;
+				if (type === 0)
+					m.setFieldStyle('color:red');
+				else
+					m.setFieldStyle('color:#3892D3');
+				m.setValue(msg);
+			},
 			initComponent : function() {
 				var me = this;
 				var _cfg = me.input.cfg;
 				var _dataid = me.input.dataid;
 				var _auth = me.input.auth;
 				var _data = me.input.data;
+				me.msgComp = Ext.create('Ext.form.field.Display', {
+							flex : 1,
+							fieldStyle : 'color:#3892D3',
+							value : ':-)'
+						});
 
-				me.layout = 'border';
+				// me.layout = 'border';
 
-				me.items = [{
-							region : 'north',
-							bodyStyle : 'padding:0 0 0 10px;background-color:yellow;',
-							height : 20,
-							itemId : 'msgpanel',
-							items : {
-								itemId : 'msgbox',
-								xtype : 'displayfield',
-								value : _cfg.form.msg ? _cfg.form.msg : ':-)'
-							}
-						}, {
-							region : 'center',
-							layout : 'anchor',
-							border : 0,
-							items : me.getFormItems(me.input)
-						}];
-
+				// me.items = [{
+				// region : 'north',
+				// bodyStyle : 'padding:0 0 0 10px;background-color:yellow;',
+				// height : 20,
+				// itemId : 'msgpanel',
+				// items : {
+				// itemId : 'msgbox',
+				// xtype : 'displayfield',
+				// value : _cfg.form.msg ? _cfg.form.msg : ':-)'
+				// }
+				// }, {
+				// region : 'center',
+				// layout : 'anchor',
+				// border : 0,
+				// items : me.getFormItems(me.input)
+				// }];
+				me.items = me.getFormItems(me.input);
 				Ext.apply(me, _cfg.form || {});
-				me.buttons = [];
+				me.buttons = [me.msgComp];
 				var saveBtnState = _cfg.form.saveBtn || false;
 
-				if (((_auth & 4) === 4) || ((_auth & 1) === 1) || saveBtnState) {
+				if (me.input.grid.oRecord) {
+					if (((_auth & 4) === 4) || ((_auth & 1) === 1) || saveBtnState) {
 
-					me.buttons.push({
-								text : '保存并关闭',
-								handler : function() {
-									me.doSave(0);
-								}
-							});
+						me.buttons.push({
+									text : '保存',
+									handler : function() {
+										me.doSave(0);
+									}
+								});
+					}
+				} else {
+
+					if (((_auth & 4) === 4) || ((_auth & 1) === 1) || saveBtnState) {
+
+						me.buttons.push({
+									text : '保存并关闭',
+									handler : function() {
+										me.doSave(0);
+									}
+								});
+					}
+
+					if (((_auth & 1) === 1) || saveBtnState) {
+
+						me.buttons.push({
+									text : '保存并新增',
+									handler : function() {
+										me.doSave(1);
+									}
+								});
+					}
 				}
 
-				if ( ((_auth & 1) === 1) || saveBtnState) {
-
-					me.buttons.push({
-								text : '保存并新增',
-								handler : function() {
-									me.doSave(1);
-								}
-							});
-				}
 				me.buttons.push({
 							text : '关闭',
+							itemId : 'formCloseBtn',
 							handler : function() {
+
 								me.up('window').destroy();
 							}
 						});
@@ -108,10 +138,10 @@ Ext.define('com.ad.mq.DefaultForm', {
 							$actionid : me.input.grid.oRecord ? updateActionId : insertActionId,
 							$dataid : me.input.dataid
 						});
-				var mb = me.getComponent('msgpanel').getComponent('msgbox');
-				mb.setFieldStyle({
-							color : ''
-						});
+				// var mb = me.getComponent('msgpanel').getComponent('msgbox');
+				// mb.setFieldStyle({
+				// color : ''
+				// });
 				form.submit({
 							waitTitle : '请稍候',
 							waitMsg : '处理中...',
@@ -120,34 +150,38 @@ Ext.define('com.ad.mq.DefaultForm', {
 							success : function(form, action) {
 								var rtn = Ext.JSON.decode(action.response.responseText || '{}');
 								if (rtn.session) {
-									mb.setValue(rtn.message || '处理成功！');
+									// mb.setValue(rtn.message || '处理成功！');
+
 									me.doRefresh();
 									switch (type) {
 										case 0 :
+											me.showMsg(rtn.message || '处理成功！');
 											me.up('window').destroy();
 											break;
 										case 1 :
 											form.reset();
+											me.showMsg(rtn.message || '1条数据保存成功，请继续录入!');
+
+											// mb.setValue( );
 											break;
 									}
 								} else {
-
-									mb.setValue('警告:' + rtn.message);
+									me.showMsg(rtn.message || '登录信息丢失 ，请重新登录!', 0);
 								}
 							},
 							failure : function(form, action) {
-								mb.setFieldStyle({
-											color : 'red'
-										});
+								// mb.setFieldStyle({
+								// color : 'red'
+								// });
 								switch (action.failureType) {
 									case Ext.form.action.Action.CONNECT_FAILURE :
-										mb.setValue('错误:操作无法完成，请检查你的数据项!');
+										me.showMsg('错误:操作无法完成，请检查你的数据项!', 0);
 										break;
 									case Ext.form.action.Action.SERVER_INVALID :
-										mb.setValue('错误:操作无法完成，请检查你的数据项!!');
+										me.showMsg('错误:操作无法完成，请检查你的数据项!!', 0);
 										break;
 									default :
-										mb.setValue('错误:操作无法完成，请检查你的数据项!!!');
+										me.showMsg('错误:操作无法完成，请检查你的数据项!!!', 0);
 										break;
 								}
 							}
