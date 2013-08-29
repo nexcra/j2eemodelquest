@@ -56,7 +56,7 @@ Ext.define('com.ad.button.ExpExcel', {
 			            	try {
 			            		oXL = new ActiveXObject("Excel.Application");
 			            	}catch (e) {
-								Ext.Msg.alert('警告','您所设定的安全级别太高，或者您的电脑没有安装Microsoft Excel软件！');
+								alert('您所设定的安全级别太高，或者您的电脑没有安装Microsoft Excel软件！');
 								return false;
 							}
 							var oWB = oXL.Workbooks.Add();
@@ -71,7 +71,7 @@ Ext.define('com.ad.button.ExpExcel', {
 							j = 0;
 							store.each(function(record){
 								for (var v in columns ){
-									oSheet.Cells(i + 1, j + 1).Value = record.get(columns[v].dataIndex) ;
+									oSheet.Cells(i + 1, j + 1).Value = columns[v]['xtype']=='rownumberer' ? i : record.get(columns[v].dataIndex) ;
 									oSheet.Cells(i + 1, j + 1).Borders.Weight = 2;
 									j++;
 								}
@@ -86,7 +86,7 @@ Ext.define('com.ad.button.ExpExcel', {
 			            	try {
 			            		oXL = new ActiveXObject("Excel.Application");
 			            	}catch (e) {
-								Ext.Msg.alert('警告','您所设定的安全级别太高，或者您的电脑没有安装Microsoft Excel软件！');
+								alert('警告','您所设定的安全级别太高，或者您的电脑没有安装Microsoft Excel软件！');
 								return false;
 							}
 							var oWB = oXL.Workbooks.Add();
@@ -104,7 +104,7 @@ Ext.define('com.ad.button.ExpExcel', {
 							store.each(function(record){
 								for (var v in columns ){
 									if (!columns[v].hidden){
-										oSheet.Cells(i + 1, j + 1).Value = record.get(columns[v].dataIndex) ;
+										oSheet.Cells(i + 1, j + 1).Value = columns[v]['xtype']=='rownumberer' ? i : record.get(columns[v].dataIndex) ;
 										oSheet.Cells(i + 1, j + 1).Borders.Weight = 2;
 										j++;
 									}
@@ -178,13 +178,13 @@ Ext.define('com.ad.button.ExpExcel', {
 				            var datas = '<tr>';
 							for (var v in columns ){
 								datas += '<th>' + columns[v].text + '</th>' ;
-								console.log(columns[v]);
+//								console.log(columns[v]);
 							}
-							datas += '</tr>'
+							datas += '</tr>';
 							store.each(function(record){
 								datas += '<tr>';
 								for (var v in columns ){
-									datas += '<td>' + record.get(columns[v].dataIndex) + '</td>' ;
+									datas += '<td>' + (columns[v]['xtype']=='rownumberer' ? i : record.get(columns[v].dataIndex)) + '</td>' ;
 								}
 								datas += '</tr>';
 							});
@@ -200,12 +200,12 @@ Ext.define('com.ad.button.ExpExcel', {
 								if (!columns[v].hidden)
 									datas += '<th>' + columns[v].text + '</th>' ;
 							}
-							datas += '</tr>'
+							datas += '</tr>';
 							store.each(function(record){
 								datas += '<tr>';
 								for (var v in columns ){
 									if (!columns[v].hidden)
-										datas += '<td>' + record.get(columns[v].dataIndex) + '</td>' ;
+										datas += '<td>' + (columns[v]['xtype']=='rownumberer' ? i : record.get(columns[v].dataIndex))+ '</td>' ;
 								}
 								datas += '</tr>';
 							});

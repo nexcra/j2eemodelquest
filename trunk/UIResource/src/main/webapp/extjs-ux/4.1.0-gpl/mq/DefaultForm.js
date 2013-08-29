@@ -46,6 +46,9 @@ Ext.define('com.ad.mq.DefaultForm', {
 					m.setFieldStyle('color:#3892D3');
 				m.setValue(msg);
 			},
+			afterSubmit : function() {
+				return false;
+			},
 			initComponent : function() {
 				var me = this;
 				var _cfg = me.input.cfg;
@@ -81,11 +84,17 @@ Ext.define('com.ad.mq.DefaultForm', {
 				me.buttons = [me.msgComp];
 				var saveBtnState = _cfg.form.saveBtn || false;
 
-				if (me.input.grid.oRecord) {
+				if (me.input.grid.oRecord) { // 修改
 					if (((_auth & 4) === 4) || ((_auth & 1) === 1) || saveBtnState) {
-
+/*
 						me.buttons.push({
-									text : '保存',
+									text : '保存并继续修改',
+									handler : function() {
+										me.doSave(2);
+									}
+								});*/
+						me.buttons.push({
+									text : '保存并关闭',
 									handler : function() {
 										me.doSave(0);
 									}
@@ -118,7 +127,7 @@ Ext.define('com.ad.mq.DefaultForm', {
 							text : '关闭',
 							itemId : 'formCloseBtn',
 							handler : function() {
-
+								me.doRefresh();
 								me.up('window').destroy();
 							}
 						});
@@ -152,18 +161,42 @@ Ext.define('com.ad.mq.DefaultForm', {
 								if (rtn.session) {
 									// mb.setValue(rtn.message || '处理成功！');
 
-									me.doRefresh();
 									switch (type) {
 										case 0 :
 											me.showMsg(rtn.message || '处理成功！');
+											me.doRefresh();
 											me.up('window').destroy();
 											break;
 										case 1 :
-											form.reset();
+											
+											if (!me.afterSubmit())
+												form.reset();
 											me.showMsg(rtn.message || '1条数据保存成功，请继续录入!');
+											/*
+										case 2 :
+											// form.reset();
+											var gridpanel = me.input.grid.oView;
+											// var currectRecord =
+											// me.input.grid.oRecord;
+											var store = gridpanel.store;
+											var record = form.getRecord();
+											record.commit();
+											console.log(gridpanel);
+											console.log(store);
+											store.findBy(function(recd ,idx){
+												
+											
+											});
+//											var selectIdx = store.getById(currectRecord.getId());
+//											console.log(selectIdx);
+											if (!me.afterSubmit()) {
+												//												
 
+											}
+
+											me.showMsg(rtn.message || '1条数据保存成功，请继续修改下一条!');
 											// mb.setValue( );
-											break;
+											break;*/
 									}
 								} else {
 									me.showMsg(rtn.message || '登录信息丢失 ，请重新登录!', 0);
