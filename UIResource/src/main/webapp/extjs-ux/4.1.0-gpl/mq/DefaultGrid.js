@@ -450,10 +450,9 @@ Ext.define('com.ad.mq.DefaultGrid', {
 								oOpts : eOpts
 							}
 						});
-
-				var form = Ext.create('com.ad.mq.DefaultForm', {
-							input : formCfg
-						});
+				var formConfig = me.input.form || {};
+				Ext.apply(formConfig ,{input : formCfg});
+				var form = Ext.create('com.ad.mq.DefaultForm', formConfig);
 				if (record)
 					form.loadRecord(record);
 				var win = {
@@ -558,6 +557,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 					columns.push({
 								xtype : 'rownumberer',
 								header : '序号',
+								text:'序号',
 								defaultWidth : 50,
 								minWidth : 50
 							});
@@ -565,10 +565,11 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				var column;
 				Ext.each(data, function(value) {
 							column = {
-								dataIndex : value.fieldvalue,
-								text : value.fieldname,
-								eleid : value.id,
-								gridindex : value.gridindex
+								dataIndex : value['fieldvalue'],
+								header:value['fieldname'],
+								text : value['fieldname'],
+								eleid : value['id'],
+								gridindex : value['gridindex']
 								// ,
 								// ftype : value.ftype
 							};
