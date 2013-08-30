@@ -29,7 +29,7 @@ function fileQueued(file) {
 		// You might include code here that prevents the form from being submitted while the upload is in
 		// progress.  Then you'll want to put code in the Queue Complete handler to "unblock" the form
 		var progress = new FileProgress(file, this.customSettings.progressTarget);
-		progress.setStatus("Pending...");
+		progress.setStatus("等待上传...");
 		progress.toggleCancel(true, this);
 
 	} catch (ex) {
@@ -51,15 +51,15 @@ function fileQueueError(file, errorCode, message) {
 
 		switch (errorCode) {
 		case SWFUpload.QUEUE_ERROR.FILE_EXCEEDS_SIZE_LIMIT:
-			progress.setStatus("File is too big.");
+			progress.setStatus("文件太大.");
 			this.debug("Error Code: File too big, File name: " + file.name + ", File size: " + file.size + ", Message: " + message);
 			break;
 		case SWFUpload.QUEUE_ERROR.ZERO_BYTE_FILE:
-			progress.setStatus("Cannot upload Zero Byte files.");
+			progress.setStatus("不能上传空文件.");
 			this.debug("Error Code: Zero byte file, File name: " + file.name + ", File size: " + file.size + ", Message: " + message);
 			break;
 		case SWFUpload.QUEUE_ERROR.INVALID_FILETYPE:
-			progress.setStatus("Invalid File Type.");
+			progress.setStatus("无效的文件类型.");
 			this.debug("Error Code: Invalid File Type, File name: " + file.name + ", File size: " + file.size + ", Message: " + message);
 			break;
 		case SWFUpload.QUEUE_ERROR.QUEUE_LIMIT_EXCEEDED:
@@ -94,7 +94,7 @@ function uploadStart(file) {
 	try {
 		/* I don't want to do any file validation or anything,  I'll just update the UI and return true to indicate that the upload should start */
 		var progress = new FileProgress(file, this.customSettings.progressTarget);
-		progress.setStatus("Uploading...");
+		progress.setStatus("上传中...");
 		progress.toggleCancel(true, this);
 	}
 	catch (ex) {
@@ -110,7 +110,7 @@ function uploadProgress(file, bytesLoaded, bytesTotal) {
 
 		var progress = new FileProgress(file, this.customSettings.progressTarget);
 		progress.setProgress(percent);
-		progress.setStatus("Uploading...");
+		progress.setStatus("上传中...");
 	} catch (ex) {
 		this.debug(ex);
 	}
@@ -120,7 +120,7 @@ function uploadSuccess(file, serverData) {
 	try {
 		var progress = new FileProgress(file, this.customSettings.progressTarget);
 		progress.setComplete();
-		progress.setStatus("Complete.");
+		progress.setStatus("完成.");
 		progress.toggleCancel(false);
 
 	} catch (ex) {
