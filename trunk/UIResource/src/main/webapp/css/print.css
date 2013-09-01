@@ -1,3 +1,9 @@
+* {
+	font-size: 14pt;
+	font-family: 微软雅黑, 宋体, helvetica, tahoma, verdana, sans-serif;
+}
+
+
 .printTable_Title {
 	text-align: center;
 	font-size: 20pt;

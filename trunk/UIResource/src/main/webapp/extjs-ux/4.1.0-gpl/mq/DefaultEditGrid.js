@@ -68,7 +68,7 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 								clicksToMoveEditor : 1,
 								autoCancel : false,
 								pluginId : 'rowEditing',
-								errorSummary:false,
+								errorSummary : false,
 								listeners : {
 									edit : function(editor, context, eOpts) {
 										me.doSave(editor, context, eOpts);
@@ -194,18 +194,13 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 				var updateActionId = me.input.cfg.form.update_actionid || 1001;
 				var isNew = context.record.isNew;
 				/*
-				if (me.idProperty.constructor == String) {
-					if (!context.record.get(me.idProperty)) {
-						isNew = true;
-					}
-				} else if (me.idProperty.constructor == Array) {
-					for (var i = 0, len = me.idProperty.length; i < len; i++) {
-						if (!context.record.get(me.idProperty[i])) {
-							isNew = true;
-							break;
-						}
-					}
-				}*/
+				 * if (me.idProperty.constructor == String) { if
+				 * (!context.record.get(me.idProperty)) { isNew = true; } } else
+				 * if (me.idProperty.constructor == Array) { for (var i = 0, len =
+				 * me.idProperty.length; i < len; i++) { if
+				 * (!context.record.get(me.idProperty[i])) { isNew = true;
+				 * break; } } }
+				 */
 				Ext.apply(params, {
 							$actionid : !isNew ? updateActionId : insertActionId,
 							$dataid : me.input.dataid
@@ -214,9 +209,12 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 				com.ad.ajax({
 							params : params,
 							callback : function(returndata) {
-								me.doRefresh();
-								if (returndata.message){
+								// me.doRefresh();
+								context.record.commit();
+								if (returndata.message) {
 									Ext.Msg.alert('提醒', returndata.message);
+								} else {
+									
 								}
 							}
 						});
@@ -318,7 +316,7 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 						});
 
 				var queryActionId = cfg.grid.select_actionid || 1000;
-				if (me.input.cfg.grid.NotShowPaging){
+				if (me.input.cfg.grid.NotShowPaging) {
 					queryActionId = me.input.cfg.grid.select_actionid || 1004;
 				}
 				var params = {
@@ -377,21 +375,22 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 							return 0;
 						});
 				var columns = [];
-				
-				if (!me.input.cfg.grid.showRownumberer){
+
+				if (!me.input.cfg.grid.showRownumberer) {
 					columns.push({
-							xtype : 'rownumberer',
-							header : '序号',
-							defaultWidth : 50,
-							minWidth : 50
-						});
+								xtype : 'rownumberer',
+								header : '序号',
+								defaultWidth : 50,
+								minWidth : 50
+							});
 				}
-				
+
 				var column;
 				Ext.each(data, function(value) {
 							column = {
 								dataIndex : value.fieldvalue,
 								header : value.fieldname,
+								text : value.fieldname,
 								editor : {},
 								eleid : value.id,
 								gridindex : value.gridindex
@@ -433,13 +432,13 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 									});
 							columns.push(column);
 						});
-//				console.log(columns);
+				// console.log(columns);
 				return columns;
 			},
 			initMenuBar : function(_cfg, _auth, _dataid) {
 				var me = this;
 				var tbarItems = [];
-				var tbarItems = [Ext.create('Ext.Button',{
+				var tbarItems = [Ext.create('Ext.Button', {
 							iconCls : Ext.baseCSSPrefix + 'tbar-loading',
 							tooltip : '刷新[' + _dataid + ']',
 							scope : this,
@@ -448,7 +447,7 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 						})];
 
 				if ((_auth & 1) === 1) {
-					tbarItems.push(Ext.create('Ext.Button',{
+					tbarItems.push(Ext.create('Ext.Button', {
 								iconCls : 'icon-add',
 								tooltip : '添加',
 								scope : this,
@@ -459,7 +458,7 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 				}
 
 				if ((_auth & 2) === 2) {
-					tbarItems.push(Ext.create('Ext.Button',{
+					tbarItems.push(Ext.create('Ext.Button', {
 								iconCls : 'icon-delete',
 								tooltip : '删除',
 								disabled : true,
@@ -569,16 +568,16 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 						bbarItems.push(newObject);
 					}
 				}
-				if (_cfg.grid.NotShowPaging){
-				}else{
+				if (_cfg.grid.NotShowPaging) {
+				} else {
 					me.bbar = Ext.create('Ext.toolbar.Paging', {
-							dock : 'bottom',
-							store : me.getStore(),
-							items : bbarItems,
-							displayInfo : true
-						});
+								dock : 'bottom',
+								store : me.getStore(),
+								items : bbarItems,
+								displayInfo : true
+							});
 				}
-				
+
 				me.getSelectionModel().on('selectionchange', me.onSelectChange, this);
 			},
 			onSelectChange : function(selModel, selections) {
