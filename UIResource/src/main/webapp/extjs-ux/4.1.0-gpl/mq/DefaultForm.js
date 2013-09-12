@@ -168,7 +168,7 @@ Ext.define('com.ad.mq.DefaultForm', {
 											me.up('window').destroy();
 											break;
 										case 1 :
-											
+											me.doRefresh();
 											if (!me.afterSubmit())
 												form.reset();
 											me.showMsg(rtn.message || '1条数据保存成功，请继续录入!');

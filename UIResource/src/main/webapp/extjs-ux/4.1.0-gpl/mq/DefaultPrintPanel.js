@@ -55,6 +55,7 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 
 				tableBody += '</tr>';
 				var cunt = 0;
+				var style ;
 				me._store.each(function(record) {
 							tableBody += '<tr>';
 							if (me._showIdxNum) {
@@ -62,13 +63,16 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 							}
 							for (var i = 0, len = me._fields.length; i < len; i++) {
 								var val = record.get(me._fields[i]['dataIndex']);
+								style = me._fields[i]['style'] ||'';
 								if (Ext.typeOf(val)==='date'){
 									val = Ext.Date.format(val ,'Y-m-d');
 								}
-								if (Ext.typeOf(val)==='number'){
-									val = Ext.util.Format.number(val,'0,000.00')
+								if ( !me._fields[i]['format'] && Ext.typeOf(val)==='number'){
+									val = Ext.util.Format.number(val,'0,000.00');
+									style = 'text-align:right;' + style;
 								}
-								tableBody += '<td style="' + me._fields[i]['style'] + '" >' + (Ext.isEmpty(val) ? '' : val) + '</td>';
+								
+								tableBody += '<td style="' + style+ '" >' + (Ext.isEmpty(val) ? '' : val) + '</td>';
 							}
 							for (var i = 0, len = me._sumfields.length; i < len; i++) {
 								me._sumfields[i]['value'] += record.get(me._sumfields[i]['dataIndex']);
