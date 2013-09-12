@@ -52,12 +52,21 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 
 				Ext.apply(me, _cfg.grid || {});
 
-				var filtersFeature = Ext.create('Ext.ux.grid.FiltersFeature', {
+//				var filtersFeature = Ext.create('Ext.ux.grid.FiltersFeature', {
+//							encode : true,
+//							local : false
+//						});
+//
+//				me.features = [filtersFeature];
+//				
+				
+				if (!me.features){
+					me.features = [];
+				}
+				me.features.push(Ext.create('Ext.ux.grid.FiltersFeature', {
 							encode : true,
 							local : false
-						});
-
-				me.features = [filtersFeature];
+						}));
 
 				if ((_auth & 4) === 4 || (_auth & 1) === 1) {
 					var rowEditing = Ext.create('Ext.grid.plugin.RowEditing', {
@@ -206,11 +215,13 @@ Ext.define('com.ad.mq.DefaultEditGrid', {
 							$dataid : me.input.dataid
 						});
 				Ext.apply(params, data);
+				context.record.commit();
 				com.ad.ajax({
 							params : params,
 							callback : function(returndata) {
-								// me.doRefresh();
-								context.record.commit();
+								if (me.input.cfg.form.autoRefresh)
+								 	me.doRefresh();
+								
 								if (returndata.message) {
 									Ext.Msg.alert('提醒', returndata.message);
 								} else {

@@ -62,10 +62,13 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				me.input.selectionHook = [];
 
 				Ext.apply(me, _cfg.grid || {});
-				me.features = [Ext.create('Ext.ux.grid.FiltersFeature', {
+				if (!me.features){
+					me.features = [];
+				}
+				me.features.push(Ext.create('Ext.ux.grid.FiltersFeature', {
 							encode : true,
 							local : false
-						})];
+						}));
 
 				var fields = me.getFieldsCfg(_data);
 				var modelName = 'Model_' + _dataid;
@@ -103,7 +106,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 							pruneModifiedRecords : true,
 							autoLoad : false
 						});
-				
+
 				var store = Ext.create('App.store.JsonStore', storeCfg);
 				me.store = store;
 				var tbarItems = [
@@ -451,7 +454,9 @@ Ext.define('com.ad.mq.DefaultGrid', {
 							}
 						});
 				var formConfig = me.input.form || {};
-				Ext.apply(formConfig ,{input : formCfg});
+				Ext.apply(formConfig, {
+							input : formCfg
+						});
 				var form = Ext.create('com.ad.mq.DefaultForm', formConfig);
 				if (record)
 					form.loadRecord(record);
@@ -557,7 +562,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 					columns.push({
 								xtype : 'rownumberer',
 								header : '序号',
-								text:'序号',
+								text : '序号',
 								defaultWidth : 50,
 								minWidth : 50
 							});
@@ -566,7 +571,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				Ext.each(data, function(value) {
 							column = {
 								dataIndex : value['fieldvalue'],
-								header:value['fieldname'],
+								header : value['fieldname'],
 								text : value['fieldname'],
 								eleid : value['id'],
 								gridindex : value['gridindex']
