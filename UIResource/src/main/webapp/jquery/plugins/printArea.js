@@ -31,7 +31,7 @@
 		popup : "popup"
 	};
 	var defaults = {
-		mode : modes.iframe,
+		mode : $.browser.msie ? modes.popup : modes.iframe  ,
 		popHt : 500,
 		popWd : 400,
 		popX : 200,
@@ -67,6 +67,7 @@
 		}
 
 		writeDoc.open();
+//		console.log(docType() + "<html>" + getHead() + getBody(ele) + "</html>");
 		writeDoc.write(docType() + "<html>" + getHead() + getBody(ele) + "</html>");
 		writeDoc.close();
 
