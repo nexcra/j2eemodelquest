@@ -48,8 +48,20 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 	protected String $sort;
 	protected String $queryvalue;
 	protected String $querynames;
+	protected String $querymethod;
 	protected String $group;
+	protected Integer $summary;
+	
+	
 	// protected String dataCfg;
+
+	public Integer get$summary() {
+		return $summary;
+	}
+
+	public void set$summary(Integer $summary) {
+		this.$summary = $summary;
+	}
 
 	private final Logger log = Logger.getLogger(SelectAction.class);
 
@@ -78,6 +90,10 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 	 */
 	public void set$queryvalue(String $queryvalue) {
 		this.$queryvalue = $queryvalue;
+	}
+
+	public void set$querymethod(String $querymethod) {
+		this.$querymethod = $querymethod;
 	}
 
 	/**
@@ -207,7 +223,21 @@ public class SelectAction extends ActionSupport implements DataBaseAware, Applic
 
 		this.sql = sb.toString();
 		if (!StringUtils.isEmpty(this.$queryvalue) && !StringUtils.isEmpty(this.$querynames)) {
-			this.sql = "SELECT * FROM (" + this.sql + ") WHERE " + this.$querynames + " LIKE '%" + this.$queryvalue + "%'";
+			this.sql = "SELECT * FROM (" + this.sql + ") WHERE " + this.$querynames;
+			if ("=".equals(this.$querymethod)) {
+				this.sql += " ='" + this.$queryvalue + "' ";
+			} else if ("lt".equalsIgnoreCase(this.$querymethod)) {
+				this.sql += " <'" + this.$queryvalue + "' ";
+			} else if ("gt".equalsIgnoreCase(this.$querymethod)) {
+				this.sql += " >'" + this.$queryvalue + "' ";
+			} else if ("left-like".equalsIgnoreCase(this.$querymethod)) {
+				this.sql += " LIKE '%" + this.$queryvalue + "' ";
+			} else if ("right-like".equalsIgnoreCase(this.$querymethod)) {
+				this.sql += " LIKE '" + this.$queryvalue + "%' ";
+			} else {
+				this.sql += " LIKE '%" + this.$queryvalue + "%' ";
+			}
+
 		}
 
 		if (!StringUtils.isEmpty(this.$group)) {
