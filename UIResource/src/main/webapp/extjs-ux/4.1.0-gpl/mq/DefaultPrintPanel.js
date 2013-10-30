@@ -55,7 +55,10 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 
 				tableBody += '</tr>';
 				var cunt = 0;
-				var style ;
+				var style;
+				for (var i = 0, len = me._sumfields.length; i < len; i++) {
+					me._sumfields[i]['value'] = 0;
+				}
 				me._store.each(function(record) {
 							tableBody += '<tr>';
 							if (me._showIdxNum) {
@@ -63,16 +66,22 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 							}
 							for (var i = 0, len = me._fields.length; i < len; i++) {
 								var val = record.get(me._fields[i]['dataIndex']);
-								style = me._fields[i]['style'] ||'';
-								if (Ext.typeOf(val)==='date'){
-									val = Ext.Date.format(val ,'Y-m-d');
+								style = me._fields[i]['style'] || '';
+								if (Ext.typeOf(me._fields[i]['format']) === 'function') {
+									val = me._fields[i]['format'](val);
+								} else {
+									if (Ext.typeOf(val) === 'date') {
+										val = Ext.Date.format(val, 'Y-m-d');
+									}
+									if (Ext.typeOf(val) === 'number') {
+										val = Ext.util.Format.number(val, '0,000.00');
+									}
 								}
-								if ( !me._fields[i]['format'] && Ext.typeOf(val)==='number'){
-									val = Ext.util.Format.number(val,'0,000.00');
+								if (Ext.typeOf(val) === 'number') {
 									style = 'text-align:right;' + style;
 								}
-								
-								tableBody += '<td style="' + style+ '" >' + (Ext.isEmpty(val) ? '' : val) + '</td>';
+
+								tableBody += '<td style="' + style + '" >' + (Ext.isEmpty(val) ? '' : val) + '</td>';
 							}
 							for (var i = 0, len = me._sumfields.length; i < len; i++) {
 								me._sumfields[i]['value'] += record.get(me._sumfields[i]['dataIndex']);
@@ -81,23 +90,19 @@ Ext.define('com.ad.mq.DefaultPrintPanel', {
 						}, me);
 
 				if (me._sumfields.length > 0) {
-					var colspanNum = 0;
-					if (me._showIdxNum) {
-						colspanNum = 1;
-					}
 
 					if (me._totalTD) {
 						for (var j = 0, lj = me._sumfields.length; j < lj; j++) {
-							me._totalTD = me._totalTD.replace("{" + me._sumfields[j]['dataIndex'] + '}', Ext.util.Format.number(me._sumfields[j]['value'],'0,000.00'));
+							me._totalTD = me._totalTD.replace("{" + me._sumfields[j]['dataIndex'] + '}', Ext.Number.toFixed(me._sumfields[j]['value'], me._sumfields[j]['precision'] || 2));
 						}
 						tableBody += me._totalTD;
 					}
 				}
-				if (me._footerTD){
-					tableBody +=me._footerTD;
+				if (me._footerTD) {
+					tableBody += me._footerTD;
 				}
 				tableBody += '</table></div>';
-				me.html = '<div id="' + me.printTableAreaId + '">' + titleDIV + (headerDIV ? headerDIV : '') + tableBody + (footerDIV ? footerDIV : '') + '</div>';
+				me.html = '<div id="' + me.printTableAreaId + '">' + titleDIV + (headerDIV|| '') + tableBody + (footerDIV|| '') + '</div>';
 				if (me._autoPrint) {
 					me.listeners = {
 						afterrender : function(_panel, eOpts) {
