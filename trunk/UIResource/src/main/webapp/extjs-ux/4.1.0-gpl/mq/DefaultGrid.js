@@ -62,7 +62,7 @@ Ext.define('com.ad.mq.DefaultGrid', {
 				me.input.selectionHook = [];
 
 				Ext.apply(me, _cfg.grid || {});
-				if (!me.features){
+				if (!me.features) {
 					me.features = [];
 				}
 				me.features.push(Ext.create('Ext.ux.grid.FiltersFeature', {
@@ -167,7 +167,9 @@ Ext.define('com.ad.mq.DefaultGrid', {
 						}
 						tbarItems.push(newObject);
 					}
+					
 				}
+				
 				if (tbarItems.length > 0) {
 					me.tbar = {
 						xtype : 'toolbar',
