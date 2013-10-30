@@ -576,7 +576,8 @@ Ext.define('com.ad.mq.DefaultGrid', {
 								header : value['fieldname'],
 								text : value['fieldname'],
 								eleid : value['id'],
-								gridindex : value['gridindex']
+								gridindex : value['gridindex'],
+								ftype : value['ftype']
 								// ,
 								// ftype : value.ftype
 							};
